@@ -119,11 +119,13 @@ const AddPet = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-red-100 to-rose-200 flex items-center justify-center p-4">
       <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-4xl">
-        <h1 className="text-3xl font-bold text-red-600 text-center mb-6">
+        <h1 className="text-3xl font-bold text-[#B4789D] text-center mb-6
+">
           Registrar Nueva Mascota
         </h1>
 
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {error && <p className="text-[#C6A89C] text-center mb-4
+"          >{error}</p>}
         {success && (
           <p className="text-green-500 text-center mb-4">
             ¡Mascota registrada exitosamente! 🎉
@@ -132,36 +134,37 @@ const AddPet = () => {
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Previsualización de Imagen */}
-          <div className="col-span-full flex flex-col items-center">
-            <div className="relative group">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-red-500 shadow-md">
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Previsualización"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full bg-gray-100">
-                    <p className="text-gray-500">Sin imagen</p>
-                  </div>
-                )}
-              </div>
-              <label
-                htmlFor="uploadImage"
-                className="absolute bottom-0 right-0 bg-red-600 text-white p-2 rounded-full cursor-pointer hover:bg-red-800"
-              >
-                📷
-              </label>
-              <input
-                id="uploadImage"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </div>
-          </div>
+         <div className="col-span-full flex flex-col items-center">
+  <div className="relative group">
+    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#B4789D] shadow-md">
+      {imagePreview ? (
+        <img
+          src={imagePreview}
+          alt="Previsualización"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="flex items-center justify-center h-full bg-[#E7D3BF]">
+          <p className="text-[#C6A89C]">Sin imagen</p>
+        </div>
+      )}
+    </div>
+    <label
+      htmlFor="uploadImage"
+      className="absolute bottom-0 right-0 bg-[#B4789D] text-white p-2 rounded-full cursor-pointer hover:bg-[#C6A89C] transition-all"
+    >
+      📷
+    </label>
+    <input
+      id="uploadImage"
+      type="file"
+      accept="image/*"
+      onChange={handleImageChange}
+      className="hidden"
+    />
+  </div>
+</div>
+
 
           {/* Campos del Formulario */}
           <div className="col-span-full">
@@ -304,16 +307,22 @@ const AddPet = () => {
           </div>
 
           <div className="col-span-full">
-            <button
-              type="submit"
-              className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-all"
-            >
-              Registrar Mascota
-            </button>
+          <button
+  type="submit"
+  class="w-full bg-[#B4789D] text-white py-3 rounded-lg hover:bg-[#C6A89C] transition-all"
+>
+  Registrar Mascota
+</button>
+
           </div>
         </form>
       </div>
     </div>
+  );
+};
+
+export default AddPet;
+
   );
 };
 
