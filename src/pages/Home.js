@@ -348,7 +348,7 @@ const Home = () => {
                     <h2 className="text-xl font-semibold text-black">{pet.name}</h2>
                     <p className="text-black text-sm">{pet.description}</p>
                     <div className="mt-2">
-                      <p className="text-[#C6A89C]">Precio: ${pet.price}/hora</p>
+                      <p className="text-[#C6A89C]">Precio: ${pet.price}/día</p>
                     </div>
                   </div>
                 </motion.div>
