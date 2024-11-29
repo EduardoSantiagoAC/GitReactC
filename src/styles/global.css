@@ -1,7 +1,7 @@
 :root {
   --primary-color: #ff385c; /* Rojo principal */
   --secondary-color: #ffffff; /* Blanco */
-  --background-color: #fff6b9; 
+  --background-color: #f7f7f7; /* Fondo gris claro */
   --text-color: #333333; /* Texto oscuro */
   --card-shadow: rgba(0, 0, 0, 0.1); /* Sombra para tarjetas */
   --border-color: #fdfdfd; /* Color de bordes */
@@ -46,7 +46,7 @@ button:hover {
 }
 
 .container {
-  max-width: 120px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
