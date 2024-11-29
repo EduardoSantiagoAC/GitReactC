@@ -6,84 +6,73 @@ const Login = ({ onLogin }) => {
     email: '',
     password: '',
   });
-
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { email, password } = formData;
 
-    if (!email || !password) {
-      setError('Todos los campos son obligatorios.');
+    const { email, password } = formData;
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find((u) => u.email === email && u.password === password);
+
+    if (!user) {
+      setError('Correo o contraseña incorrectos.');
       return;
     }
 
-    // Verificar si el usuario existe
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find((user) => user.email === email && user.password === password);
-
-    if (user) {
-      setError('');
-      if (onLogin) {
-        onLogin(user); // Llamamos a onLogin para guardar el estado de usuario
-      }
-      navigate('/profile'); // Redirigir al perfil después de login exitoso
-    } else {
-      setError('Correo o contraseña incorrectos.');
-    }
+    setError('');
+    onLogin(user); // Pasa los datos del usuario autenticado al estado global
+    navigate('/profile'); // Redirige al perfil del usuario
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen flex justify-center items-center">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-primary-color text-center mb-6">
-          Iniciar Sesión
-        </h1>
+    <div className="min-h-screen bg-gradient-to-br from-[#E7D3BF] via-[#D5ACC5] to-[#B4789D] flex justify-center items-center">
+      <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md">
+        <h1 className="text-3xl font-bold text-[#B4789D] text-center mb-6">Iniciar Sesión</h1>
 
-        {/* Mensajes de error */}
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        {error && <p className="text-[#B4789D] text-center mb-4">{error}</p>}
 
-        {/* Formulario */}
         <form onSubmit={handleSubmit}>
-          <label className="block text-gray-700 mb-2">Correo Electrónico</label>
+          <label className="block text-black mb-2">Correo Electrónico</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="ejemplo@correo.com"
-            className="w-full p-3 border border-gray-300 rounded mb-4"
+            className="w-full p-3 border border-[#C6A89C] rounded mb-4 focus:outline-none focus:ring-2 focus:ring-[#B4789D]"
           />
 
-          <label className="block text-gray-700 mb-2">Contraseña</label>
+          <label className="block text-black mb-2">Contraseña</label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="Tu contraseña"
-            className="w-full p-3 border border-gray-300 rounded mb-6"
+            className="w-full p-3 border border-[#C6A89C] rounded mb-6 focus:outline-none focus:ring-2 focus:ring-[#B4789D]"
           />
 
           <button
             type="submit"
-            className="w-full bg-primary-color text-white py-3 rounded hover:bg-red-500 transition"
+            className="w-full bg-[#B4789D] text-white py-3 rounded-lg hover:bg-[#C6A89C] transition-all duration-300"
           >
             Iniciar Sesión
           </button>
         </form>
 
-        <p className="text-gray-600 text-center mt-4">
+        <p className="text-black text-center mt-4">
           ¿No tienes cuenta?{' '}
-          <a href="/register" className="text-primary-color hover:underline">
+          <a
+            href="/register"
+            className="text-[#B4789D] hover:text-[#C6A89C] transition-all duration-300"
+          >
             Regístrate
           </a>
         </p>
@@ -93,3 +82,4 @@ const Login = ({ onLogin }) => {
 };
 
 export default Login;
+
