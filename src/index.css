@@ -1,14 +1,18 @@
-/* Importar las configuraciones de Tailwind CSS */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Importar estilos globales personalizados */
 @import './styles/global.css';
 
-/* Ajustes adicionales específicos para el proyecto */
 
-/* Encabezados y secciones */
+:root {
+  --primary-color: #B4789D; 
+  --secondary-color: #D5ACC5; 
+  --accent-color: #E7D3BF; 
+  --neutral-color: #C6A89C; 
+}
+
 header {
   background-color: var(--primary-color);
   color: white;
@@ -21,7 +25,6 @@ main {
   padding: 2rem;
 }
 
-/* Clases reutilizables para botones */
 .btn-primary {
   background-color: var(--primary-color);
   color: white;
@@ -33,7 +36,7 @@ main {
 }
 
 .btn-primary:hover {
-  background-color: #e04848; /* Rojo oscuro */
+  background-color: #923671; /* Tono más oscuro del rosa púrpura */
 }
 
 .btn-secondary {
@@ -47,10 +50,9 @@ main {
 }
 
 .btn-secondary:hover {
-  background-color: #008f7a; /* Verde más oscuro */
+  background-color: #B28AA7; /* Tono más oscuro del lila */
 }
 
-/* Sombras */
 .shadow-md {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -59,12 +61,10 @@ main {
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Bordes redondeados */
 .rounded {
   border-radius: 8px;
 }
 
-/* Estilos para imágenes */
 .img-rounded {
   border-radius: 8px;
   overflow: hidden;

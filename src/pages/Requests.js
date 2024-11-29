@@ -1,8 +1,8 @@
 import React from 'react';
 
 const requests = [
-  { id: 1, petName: 'Buddy', status: 'Pendiente', user: 'Carlos Gómez' },
-  { id: 2, petName: 'Whiskers', status: 'Aprobada', user: 'Lucía Pérez' },
+  { id: 1, petName: 'Biscuit', status: 'Pendiente', user: 'Carlos Gómez' },
+  { id: 2, petName: 'Bigotes', status: 'Aprobada', user: 'Lucía Pérez' },
 ];
 
 const Requests = () => {
