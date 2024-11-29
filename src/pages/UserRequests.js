@@ -56,3 +56,9 @@ const UserRequests = ({ requests }) => {
 };
 
 export default UserRequests;
+
+    </div>
+  );
+};
+
+export default UserRequests;
