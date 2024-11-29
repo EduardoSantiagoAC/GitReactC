@@ -1,0 +1,77 @@
+/* Importar las configuraciones de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Importar estilos globales personalizados */
+@import './styles/global.css';
+
+/* Ajustes adicionales específicos para el proyecto */
+
+/* Encabezados y secciones */
+header {
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+main {
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Clases reutilizables para botones */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #e04848; /* Rojo oscuro */
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: rgb(0, 0, 0);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #008f7a; /* Verde más oscuro */
+}
+
+/* Sombras */
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Bordes redondeados */
+.rounded {
+  border-radius: 8px;
+}
+
+/* Estilos para imágenes */
+.img-rounded {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.img-cover {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}

@@ -1,0 +1,57 @@
+:root {
+  --primary-color: #ff385c; /* Rojo principal */
+  --secondary-color: #ffffff; /* Blanco */
+  --background-color: #f7f7f7; /* Fondo gris claro */
+  --text-color: #333333; /* Texto oscuro */
+  --card-shadow: rgba(0, 0, 0, 0.1); /* Sombra para tarjetas */
+  --border-color: #fdfdfd; /* Color de bordes */
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 24px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #e31b46;
+}
+
+.shadow {
+  box-shadow: 0 4px 6px var(--card-shadow);
+}
+
+.rounded {
+  border-radius: 16px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
