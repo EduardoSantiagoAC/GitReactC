@@ -1,6 +1,7 @@
 {
   "name": "petshare",
   "version": "0.1.0",
+  "homepage": "https://eduardosantiagoac.github.io/GitReactC/",
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -15,11 +16,16 @@
     "tailwindcss": "^3.4.15",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
