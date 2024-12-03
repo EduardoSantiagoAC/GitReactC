@@ -1,7 +1,6 @@
 {
   "name": "petshare",
   "version": "0.1.0",
-  "homepage": "https://eduardosantiagoac.github.io/GitReactC/",
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.2.0",
