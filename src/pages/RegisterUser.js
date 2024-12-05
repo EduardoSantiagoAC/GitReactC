@@ -51,7 +51,7 @@ const RegisterUser = () => {
 
     try {
       // Enviar los datos al backend
-      const response = await fetch('https://git-react-c.vercel.app//api/users/register', {
+      const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
         method: 'POST',
         body: formDataToSend,
       });
