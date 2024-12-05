@@ -43,6 +43,9 @@ export default async function handler(req, res) {
   // Ejecutar CORS
   await runMiddleware(req, res, cors);
 
+  // Conectar a la base de datos
+  await connectToDatabase();
+
   // Solo aceptar el método POST
   if (req.method === 'POST') {
     const form = new multiparty.Form();
@@ -57,34 +60,31 @@ export default async function handler(req, res) {
       console.log('Archivos:', files);
 
       const { name, email, password, userType } = fields;
-      const profilePhoto = files.profilePhoto?.[0];
+      const profilePhoto = files.profilePhoto?.[0]; // Foto de perfil
 
+      // Validar si los campos necesarios existen
       if (!name || !email || !password || !userType || !profilePhoto) {
         console.log('Error: Faltan campos obligatorios');
         return res.status(400).json({ message: 'Faltan campos obligatorios' });
       }
 
-      // Conectar a la base de datos
+      // Crear un nuevo usuario
+      const newUser = new User({
+        name: name[0],
+        email: email[0],
+        password: password[0],
+        userType: userType[0],
+        profilePhoto: profilePhoto.originalFilename,
+      });
+
       try {
-        await connectToDatabase();
-
-        // Crear un nuevo usuario
-        const newUser = new User({
-          name: name[0],
-          email: email[0],
-          password: password[0],
-          userType: userType[0],
-          profilePhoto: profilePhoto?.path,  // Guardar la ruta de la foto
-        });
-
         // Guardar el usuario en la base de datos
         await newUser.save();
-
         console.log('Usuario registrado con éxito');
         return res.status(200).json({ message: 'Usuario registrado con éxito' });
       } catch (error) {
         console.error('Error al guardar el usuario:', error);
-        return res.status(500).json({ message: 'Hubo un error al procesar la solicitud' });
+        return res.status(500).json({ message: 'Hubo un error al guardar el usuario' });
       }
     });
   } else {

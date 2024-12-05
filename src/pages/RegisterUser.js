@@ -50,30 +50,32 @@ const RegisterUser = () => {
     formDataToSend.append('userType', userType);
 
     try {
-      // Enviar los datos al backend
+      // Hacer la solicitud a la API con fetch
       const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
         method: 'POST',
         body: formDataToSend,
       });
 
-      // Verificar si la respuesta es exitosa
+      // Verificar si la respuesta fue exitosa
       if (!response.ok) {
         throw new Error('Hubo un error al procesar la solicitud');
       }
 
       const data = await response.json();
+      console.log('Respuesta del servidor:', data);
 
-      if (data.success) {
+      // Verificar si el servidor respondió correctamente
+      if (data.message === 'Usuario registrado con éxito') {
         setSuccess(true);
-        setError('');
         setTimeout(() => {
           navigate('/login'); // Redirige al login después de registrarse
         }, 2000);
       } else {
-        setError(data.message || 'Error al registrar usuario');
+        setError(data.message || 'Error desconocido');
       }
-    } catch (error) {
-      setError(error.message || 'Error de conexión con el servidor');
+    } catch (err) {
+      console.error('Error en la solicitud:', err);
+      setError('Hubo un error al procesar la solicitud');
     }
   };
 
@@ -81,53 +83,50 @@ const RegisterUser = () => {
     <div>
       <h2>Registrarse</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>Registro exitoso! Redirigiendo al login...</p>}
+      {success && <p style={{ color: 'green' }}>Usuario registrado con éxito!</p>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Foto de perfil:</label>
-          <input type="file" name="profilePhoto" onChange={handleFileChange} />
-        </div>
-        <div>
-          <label>Nombre:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Correo electrónico:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Tipo de usuario:</label>
-          <select name="userType" value={formData.userType} onChange={handleChange}>
-            <option value="Usuario General">Usuario General</option>
-            <option value="Cuidador">Cuidador</option>
-            <option value="Dueño que presta su mascota">Dueño que presta su mascota</option>
-          </select>
-        </div>
-        <div>
-          <button type="submit">Crear cuenta</button>
-        </div>
+        <label htmlFor="profilePhoto">Foto de perfil:</label>
+        <input type="file" name="profilePhoto" onChange={handleFileChange} required />
+        <br />
+        <label htmlFor="name">Nombre:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        <br />
+        <label htmlFor="email">Correo electrónico:</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <br />
+        <label htmlFor="password">Contraseña:</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <br />
+        <label htmlFor="userType">Tipo de usuario:</label>
+        <select
+          name="userType"
+          value={formData.userType}
+          onChange={handleChange}
+        >
+          <option value="Usuario General">Usuario General</option>
+          <option value="Cuidador">Cuidador</option>
+          <option value="Dueño">Dueño</option>
+        </select>
+        <br />
+        <button type="submit">Crear cuenta</button>
       </form>
     </div>
   );
