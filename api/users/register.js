@@ -43,9 +43,6 @@ export default async function handler(req, res) {
   // Ejecutar CORS
   await runMiddleware(req, res, cors);
 
-  // Conectar a la base de datos
-  await connectToDatabase();
-
   // Solo aceptar el método POST
   if (req.method === 'POST') {
     const form = new multiparty.Form();
@@ -59,32 +56,36 @@ export default async function handler(req, res) {
       console.log('Campos:', fields);
       console.log('Archivos:', files);
 
+      // Validación de los campos
       const { name, email, password, userType } = fields;
-      const profilePhoto = files.profilePhoto?.[0]; // Foto de perfil
+      const profilePhoto = files.profilePhoto?.[0];
 
-      // Validar si los campos necesarios existen
       if (!name || !email || !password || !userType || !profilePhoto) {
         console.log('Error: Faltan campos obligatorios');
         return res.status(400).json({ message: 'Faltan campos obligatorios' });
       }
 
-      // Crear un nuevo usuario
-      const newUser = new User({
-        name: name[0],
-        email: email[0],
-        password: password[0],
-        userType: userType[0],
-        profilePhoto: profilePhoto.originalFilename,
-      });
-
+      // Conexión a la base de datos
       try {
+        await connectToDatabase();
+
+        // Crear un nuevo usuario
+        const newUser = new User({
+          name: name[0],
+          email: email[0],
+          password: password[0],
+          userType: userType[0],
+          profilePhoto: profilePhoto.originalFilename,
+        });
+
         // Guardar el usuario en la base de datos
         await newUser.save();
+
         console.log('Usuario registrado con éxito');
         return res.status(200).json({ message: 'Usuario registrado con éxito' });
       } catch (error) {
-        console.error('Error al guardar el usuario:', error);
-        return res.status(500).json({ message: 'Hubo un error al guardar el usuario' });
+        console.error('Error al guardar el usuario en la base de datos:', error);
+        return res.status(500).json({ message: 'Hubo un error al guardar el usuario en la base de datos' });
       }
     });
   } else {
