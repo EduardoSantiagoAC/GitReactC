@@ -37,8 +37,8 @@ const RegisterUser = () => {
 
     // Validación de campos
     if (!name || !email || !password || !userType || !profilePhoto) {
-        setError('Todos los campos son obligatorios.');
-        return;
+      setError('Todos los campos son obligatorios.');
+      return;
     }
 
     // Crear un objeto FormData para enviar al backend
@@ -49,91 +49,85 @@ const RegisterUser = () => {
     formDataToSend.append('password', password);
     formDataToSend.append('userType', userType);
 
-    // Asegúrate de que la URL de la API sea correcta
-    const apiUrl = 'https://git-react-c.vercel.app/api/users/register';
-
     try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            body: formDataToSend,
-        });
+      // Enviar los datos al backend
+      const response = await fetch('https://git-react-c.vercel.app//api/users/register', {
+        method: 'POST',
+        body: formDataToSend,
+      });
 
-        if (response.ok) {
-            // Si la respuesta es exitosa
-            setSuccess(true);
-            navigate('/login');  // Redirige al login después de registrar
-        } else {
-            // Si la respuesta es un error
-            const errorData = await response.json();
-            setError(errorData.message || 'Hubo un error al procesar la solicitud.');
-        }
-    } catch (err) {
-        setError('Error de conexión con el servidor.');
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error('Hubo un error al procesar la solicitud');
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess(true);
+        setError('');
+        setTimeout(() => {
+          navigate('/login'); // Redirige al login después de registrarse
+        }, 2000);
+      } else {
+        setError(data.message || 'Error al registrar usuario');
+      }
+    } catch (error) {
+      setError(error.message || 'Error de conexión con el servidor');
     }
-};
-
+  };
 
   return (
-    <div className="register-container">
-      <h2>Crear cuenta</h2>
+    <div>
+      <h2>Registrarse</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>Registro exitoso! Redirigiendo al login...</p>}
       <form onSubmit={handleSubmit}>
-        {error && <p className="error-message">{error}</p>}
-        {success && <p className="success-message">¡Registro exitoso!</p>}
-        
-        <label htmlFor="profilePhoto">Foto de perfil:</label>
-        <input 
-          type="file" 
-          id="profilePhoto" 
-          name="profilePhoto" 
-          accept="image/*" 
-          onChange={handleFileChange} 
-          required
-        />
-
-        <label htmlFor="name">Nombre:</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name" 
-          value={formData.name} 
-          onChange={handleChange} 
-          required
-        />
-
-        <label htmlFor="email">Correo electrónico:</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          required
-        />
-
-        <label htmlFor="password">Contraseña:</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password" 
-          value={formData.password} 
-          onChange={handleChange} 
-          required
-        />
-
-        <label htmlFor="userType">Tipo de usuario:</label>
-        <select 
-          id="userType" 
-          name="userType" 
-          value={formData.userType} 
-          onChange={handleChange} 
-          required
-        >
-          <option value="Usuario General">Usuario General</option>
-          <option value="Cuidador">Cuidador</option>
-          <option value="Dueño">Dueño</option>
-        </select>
-
-        <button type="submit">Crear cuenta</button>
+        <div>
+          <label>Foto de perfil:</label>
+          <input type="file" name="profilePhoto" onChange={handleFileChange} />
+        </div>
+        <div>
+          <label>Nombre:</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Correo electrónico:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Contraseña:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Tipo de usuario:</label>
+          <select name="userType" value={formData.userType} onChange={handleChange}>
+            <option value="Usuario General">Usuario General</option>
+            <option value="Cuidador">Cuidador</option>
+            <option value="Dueño que presta su mascota">Dueño que presta su mascota</option>
+          </select>
+        </div>
+        <div>
+          <button type="submit">Crear cuenta</button>
+        </div>
       </form>
     </div>
   );
