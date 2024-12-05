@@ -35,44 +35,43 @@ const RegisterUser = () => {
 
     const { name, email, password, userType, profilePhoto } = formData;
 
-    // Validaciones básicas
+    // Validación de campos
     if (!name || !email || !password || !userType || !profilePhoto) {
-      setError('Todos los campos son obligatorios.');
-      return;
+        setError('Todos los campos son obligatorios.');
+        return;
     }
+
+    // Crear un objeto FormData para enviar al backend
+    const formDataToSend = new FormData();
+    formDataToSend.append('profilePhoto', profilePhoto);
+    formDataToSend.append('name', name);
+    formDataToSend.append('email', email);
+    formDataToSend.append('password', password);
+    formDataToSend.append('userType', userType);
+
+    // Asegúrate de que la URL de la API sea correcta
+    const apiUrl = 'https://git-react-c.vercel.app/api/users/register';
 
     try {
-      // Crear un objeto FormData para enviar los datos al backend
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', name);
-      formDataToSend.append('email', email);
-      formDataToSend.append('password', password);
-      formDataToSend.append('userType', userType);
-      formDataToSend.append('profilePhoto', profilePhoto);
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formDataToSend,
+        });
 
-      // Hacer la solicitud POST a la API de backend
-      const response = await fetch('/api/users/register', {
-        method: 'POST',
-        body: formDataToSend,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setError('');
-        setSuccess(true);
-
-        // Redirigir al login después de un breve éxito
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        setError(data.message || 'Hubo un error al registrar al usuario.');
-      }
-    } catch (error) {
-      setError('Hubo un error al procesar la solicitud.');
+        if (response.ok) {
+            // Si la respuesta es exitosa
+            setSuccess(true);
+            navigate('/login');  // Redirige al login después de registrar
+        } else {
+            // Si la respuesta es un error
+            const errorData = await response.json();
+            setError(errorData.message || 'Hubo un error al procesar la solicitud.');
+        }
+    } catch (err) {
+        setError('Error de conexión con el servidor.');
     }
-  };
+};
+
 
   return (
     <div className="register-container">
