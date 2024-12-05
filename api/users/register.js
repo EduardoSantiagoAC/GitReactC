@@ -1,7 +1,7 @@
 import Cors from 'cors';
 import multiparty from 'multiparty';
 import mongoose from 'mongoose';
-import User from '../../models/User'; // Asegúrate de que la ruta sea correcta
+import User from '../models/User'; // Asegúrate de que la ruta sea correcta
 
 // Inicializar CORS
 const cors = Cors({
