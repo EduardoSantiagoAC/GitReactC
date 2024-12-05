@@ -1,27 +1,35 @@
-// api/users/register.js
-export default async function handler(req, res) {
-    if (req.method === 'POST') {
-      try {
-        const { name, email, password, userType, profilePhoto } = req.body;
-  
-        // Log de los datos recibidos
-        console.log("Datos recibidos:", req.body);
-  
-        if (!name || !email || !password || !userType || !profilePhoto) {
-          return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
-        }
-  
-        // Simula el registro del usuario (por ejemplo, en una base de datos)
-        // Aquí iría la lógica de guardado, como en una base de datos o archivo.
-  
-        // Si todo va bien
-        return res.status(200).json({ message: 'Usuario registrado correctamente.' });
-  
-      } catch (error) {
-        // Si ocurre algún error, lo mostramos en los logs
-        console.error("Error en el backend:", error);
-        return res.status(500).json({ error: 'Hubo un problema al procesar la solicitud.' });
+import Cors from 'cors';
+
+// Inicializa el middleware de CORS
+const cors = Cors({
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+});
+
+// Función que ejecuta el middleware
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
       }
+      return resolve(result);
+    });
+  });
+}
+
+export default async function handler(req, res) {
+  // Ejecutar el middleware de CORS
+  await runMiddleware(req, res, cors);
+
+  if (req.method === 'POST') {
+    try {
+      const { name, email, password, userType, profilePhoto } = req.body;
+      // Lógica de registro del usuario
+      res.status(200).json({ message: 'Usuario registrado correctamente' });
+    } catch (error) {
+      res.status(500).json({ error: 'Hubo un problema procesando la solicitud' });
     }
+  } else {
+    res.status(405).json({ error: 'Método no permitido' });
   }
-  
+}
