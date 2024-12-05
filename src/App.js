@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -7,7 +7,6 @@ import AddPet from './pages/AddPet';
 import RegisterUser from './pages/RegisterUser';
 import Login from './pages/Login';
 import UserProfile from './pages/UserProfile';
-
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -114,6 +113,9 @@ function App() {
     },
   ]);
 
+  // Nuevo estado para manejar el mensaje de la API
+  const [apiMessage, setApiMessage] = useState('');
+
   // Manejar inicio de sesión
   const handleLogin = (user) => {
     setCurrentUser(user);
@@ -131,57 +133,74 @@ function App() {
     setPets((prevPets) => [...prevPets, newPet]);
   };
 
+  // Llamar a la API cuando el componente se monte
+  useEffect(() => {
+    fetch('/api/hello') // Llamada a la API serverless
+      .then(response => response.json())
+      .then(data => {
+        setApiMessage(data.message); // Guardar el mensaje de la API en el estado
+      })
+      .catch(error => {
+        console.error('Error al llamar a la API:', error);
+      });
+  }, []);
+
   return (
     <BrowserRouter>
-      {/* Barra de navegación */}
-      <Navbar isLoggedIn={!!currentUser} currentUser={currentUser} onLogout={handleLogout} />
+      <div>
+        {/* Mostrar mensaje de la API */}
+        <h1>Mensaje de la API: {apiMessage}</h1>
 
-      {/* Rutas */}
-      <Routes>
-        {/* Página principal */}
-        <Route path="/" element={<Home pets={pets} />} />
+        {/* Barra de navegación */}
+        <Navbar isLoggedIn={!!currentUser} currentUser={currentUser} onLogout={handleLogout} />
 
-        {/* Detalles de mascota */}
-        <Route
-          path="/pets/:id"
-          element={
-            <PetDetails
-              pets={pets}
-              currentUser={currentUser}
-            />
-          }
-        />
+        {/* Rutas */}
+        <Routes>
+          {/* Página principal */}
+          <Route path="/" element={<Home pets={pets} />} />
 
-        {/* Agregar mascota */}
-        <Route
-          path="/add-pet"
-          element={
-            currentUser ? (
-              <AddPet currentUser={currentUser} onAddPet={handleAddPet} />
-            ) : (
-              <Login onLogin={handleLogin} />
-            )
-          }
-        />
+          {/* Detalles de mascota */}
+          <Route
+            path="/pets/:id"
+            element={
+              <PetDetails
+                pets={pets}
+                currentUser={currentUser}
+              />
+            }
+          />
 
-        {/* Registro de usuario */}
-        <Route path="/register" element={<RegisterUser onLogin={handleLogin} />} />
+          {/* Agregar mascota */}
+          <Route
+            path="/add-pet"
+            element={
+              currentUser ? (
+                <AddPet currentUser={currentUser} onAddPet={handleAddPet} />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
 
-        {/* Inicio de sesión */}
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          {/* Registro de usuario */}
+          <Route path="/register" element={<RegisterUser onLogin={handleLogin} />} />
 
-        {/* Perfil de usuario */}
-        <Route
-          path="/profile"
-          element={
-            currentUser ? (
-              <UserProfile user={currentUser} pets={pets} />
-            ) : (
-              <Login onLogin={handleLogin} />
-            )
-          }
-        />
-      </Routes>
+          {/* Inicio de sesión */}
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+
+          {/* Perfil de usuario */}
+          <Route
+            path="/profile"
+            element={
+              currentUser ? (
+                <UserProfile user={currentUser} pets={pets} />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
 }
