@@ -50,30 +50,27 @@ const RegisterUser = () => {
     formDataToSend.append('userType', userType);
 
     try {
-      // Enviar los datos al backend
+      // Enviar los datos al backend utilizando fetch
       const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
         method: 'POST',
         body: formDataToSend,
       });
 
-      // Verificar si la respuesta es exitosa
-      if (!response.ok) {
-        throw new Error('Hubo un error al procesar la solicitud');
-      }
+      const result = await response.json();
 
-      const data = await response.json();
-
-      if (data.success) {
+      // Verificar la respuesta del backend
+      if (response.ok) {
         setSuccess(true);
         setError('');
         setTimeout(() => {
           navigate('/login'); // Redirige al login después de registrarse
         }, 2000);
       } else {
-        setError(data.message || 'Error al registrar usuario');
+        setError(result.message || 'Hubo un error al intentar procesar la solicitud');
       }
     } catch (error) {
-      setError(error.message || 'Error de conexión con el servidor');
+      console.error('Error al hacer la solicitud:', error);
+      setError('Hubo un error al intentar procesar la solicitud');
     }
   };
 
@@ -81,14 +78,11 @@ const RegisterUser = () => {
     <div>
       <h2>Registrarse</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>Registro exitoso! Redirigiendo al login...</p>}
+      {success && <p style={{ color: 'green' }}>¡Usuario registrado con éxito!</p>}
+
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Foto de perfil:</label>
-          <input type="file" name="profilePhoto" onChange={handleFileChange} />
-        </div>
-        <div>
-          <label>Nombre:</label>
+          <label>Nombre</label>
           <input
             type="text"
             name="name"
@@ -98,7 +92,7 @@ const RegisterUser = () => {
           />
         </div>
         <div>
-          <label>Correo electrónico:</label>
+          <label>Correo electrónico</label>
           <input
             type="email"
             name="email"
@@ -108,7 +102,7 @@ const RegisterUser = () => {
           />
         </div>
         <div>
-          <label>Contraseña:</label>
+          <label>Contraseña</label>
           <input
             type="password"
             name="password"
@@ -118,8 +112,22 @@ const RegisterUser = () => {
           />
         </div>
         <div>
-          <label>Tipo de usuario:</label>
-          <select name="userType" value={formData.userType} onChange={handleChange}>
+          <label>Foto de perfil</label>
+          <input
+            type="file"
+            name="profilePhoto"
+            onChange={handleFileChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Tipo de usuario</label>
+          <select
+            name="userType"
+            value={formData.userType}
+            onChange={handleChange}
+            required
+          >
             <option value="Usuario General">Usuario General</option>
             <option value="Cuidador">Cuidador</option>
             <option value="Dueño que presta su mascota">Dueño que presta su mascota</option>
