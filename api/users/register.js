@@ -49,7 +49,6 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
-    // Validar si el encabezado Content-Type incluye multipart/form-data
     const contentType = req.headers['content-type'] || '';
     if (!contentType.includes('multipart/form-data')) {
       console.error('Content-Type no soportado o faltante');
@@ -67,7 +66,6 @@ export default async function handler(req, res) {
       console.log('Campos:', fields);
       console.log('Archivos:', files);
 
-      // Validación de los campos
       const name = fields.name?.[0];
       const email = fields.email?.[0];
       const password = fields.password?.[0];
@@ -79,17 +77,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Faltan campos obligatorios' });
       }
 
-      // Conectar a la base de datos
       await connectToDatabase();
 
-      // Verificar si el usuario ya existe
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         console.log('El correo ya está registrado');
         return res.status(400).json({ message: 'El correo ya está registrado' });
       }
 
-      // Crear un nuevo usuario
       const newUser = new User({
         name,
         email,
@@ -98,7 +93,6 @@ export default async function handler(req, res) {
         profilePhoto,
       });
 
-      // Guardar el usuario en la base de datos
       await newUser.save();
       console.log('Usuario registrado con éxito');
 

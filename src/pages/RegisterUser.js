@@ -32,36 +32,48 @@ const RegisterUser = () => {
   // Maneja el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('password', formData.password);
-      formDataToSend.append('userType', formData.userType);
-      formDataToSend.append('profilePhoto', formData.profilePhoto); // Archivo
-    
-      try {
-        const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
-          method: 'POST',
-          body: formDataToSend, // No configures manualmente Content-Type
-        });
-    
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => null); // Manejar errores que no sean JSON
-          const errorMessage = errorData?.message || 'Hubo un error al procesar la solicitud';
-          throw new Error(errorMessage);
-        }
-    
-        const data = await response.json();
-        console.log('Usuario registrado con éxito:', data);
-        setSuccess(true);
-        setError('');
-        setTimeout(() => navigate('/login'), 2000); // Redirigir al login
-      } catch (err) {
-        console.error('Error:', err);
-        setError(err.message || 'Error al conectar con el servidor');
+
+    const { name, email, password, userType, profilePhoto } = formData;
+
+    // Validación de campos
+    if (!name || !email || !password || !userType || !profilePhoto) {
+      setError('Todos los campos son obligatorios.');
+      return;
+    }
+
+    // Crear un objeto FormData para enviar al backend
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', name);
+    formDataToSend.append('email', email);
+    formDataToSend.append('password', password);
+    formDataToSend.append('userType', userType);
+    formDataToSend.append('profilePhoto', profilePhoto);
+
+    try {
+      // Hacer la solicitud a la API con fetch
+      const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
+        method: 'POST',
+        body: formDataToSend, // No configures manualmente Content-Type
+      });
+
+      // Verificar si la respuesta fue exitosa
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null); // Manejar errores que no sean JSON
+        const errorMessage = errorData?.message || 'Hubo un error al procesar la solicitud';
+        throw new Error(errorMessage);
       }
-    };
+
+      const data = await response.json();
+      console.log('Usuario registrado con éxito:', data);
+
+      setSuccess(true);
+      setError('');
+      setTimeout(() => navigate('/login'), 2000); // Redirigir al login
+    } catch (err) {
+      console.error('Error:', err);
+      setError(err.message || 'Error al conectar con el servidor');
+    }
+  };
 
   return (
     <div>
