@@ -49,8 +49,9 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
-    // Validar encabezado Content-Type
-    if (!req.headers['content-type']?.includes('multipart/form-data')) {
+    // Validar si el encabezado Content-Type incluye multipart/form-data
+    const contentType = req.headers['content-type'] || '';
+    if (!contentType.includes('multipart/form-data')) {
       console.error('Content-Type no soportado o faltante');
       return res.status(415).json({ message: 'Content-Type no soportado o faltante' });
     }
