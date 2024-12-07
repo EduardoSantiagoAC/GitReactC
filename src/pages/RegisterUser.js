@@ -53,12 +53,13 @@ const RegisterUser = () => {
       // Hacer la solicitud a la API con fetch
       const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
         method: 'POST',
-        body: formDataToSend,
+        body: formDataToSend, // Importante: No añadir manualmente Content-Type
       });
 
       // Verificar si la respuesta fue exitosa
       if (!response.ok) {
-        throw new Error('Hubo un error al procesar la solicitud');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Hubo un error al procesar la solicitud');
       }
 
       const data = await response.json();
@@ -67,6 +68,7 @@ const RegisterUser = () => {
       // Verificar si el servidor respondió correctamente
       if (data.message === 'Usuario registrado con éxito') {
         setSuccess(true);
+        setError('');
         setTimeout(() => {
           navigate('/login'); // Redirige al login después de registrarse
         }, 2000);
@@ -75,7 +77,7 @@ const RegisterUser = () => {
       }
     } catch (err) {
       console.error('Error en la solicitud:', err);
-      setError('Hubo un error al procesar la solicitud');
+      setError(err.message || 'Error al conectar con el servidor');
     }
   };
 

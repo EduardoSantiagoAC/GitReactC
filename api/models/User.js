@@ -1,19 +1,14 @@
-// /models/User.js
+// models/User.js
 import mongoose from 'mongoose';
 
-// Esquema para el usuario
-const userSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    userType: { type: String, required: true },
-    profilePhoto: { type: String, required: true }, // Puedes almacenar la URL de la foto aquí
-  },
-  { timestamps: true }
-);
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  userType: { type: String, required: true },
+  profilePhoto: { type: String },  // Esto podría ser un URL de la foto subida
+});
 
-// Crear un modelo para el usuario
-const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default User;
