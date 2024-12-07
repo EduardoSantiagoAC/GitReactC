@@ -32,54 +32,36 @@ const RegisterUser = () => {
   // Maneja el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const { name, email, password, userType, profilePhoto } = formData;
-
-    // Validación de campos
-    if (!name || !email || !password || !userType || !profilePhoto) {
-      setError('Todos los campos son obligatorios.');
-      return;
-    }
-
-    // Crear un objeto FormData para enviar al backend
-    const formDataToSend = new FormData();
-    formDataToSend.append('profilePhoto', profilePhoto);
-    formDataToSend.append('name', name);
-    formDataToSend.append('email', email);
-    formDataToSend.append('password', password);
-    formDataToSend.append('userType', userType);
-
-    try {
-      // Hacer la solicitud a la API con fetch
-      const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
-        method: 'POST',
-        body: formDataToSend, // Importante: No añadir manualmente Content-Type
-      });
-
-      // Verificar si la respuesta fue exitosa
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Hubo un error al procesar la solicitud');
-      }
-
-      const data = await response.json();
-      console.log('Respuesta del servidor:', data);
-
-      // Verificar si el servidor respondió correctamente
-      if (data.message === 'Usuario registrado con éxito') {
+    
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('userType', formData.userType);
+      formDataToSend.append('profilePhoto', formData.profilePhoto); // Archivo
+    
+      try {
+        const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
+          method: 'POST',
+          body: formDataToSend, // No configures manualmente Content-Type
+        });
+    
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null); // Manejar errores que no sean JSON
+          const errorMessage = errorData?.message || 'Hubo un error al procesar la solicitud';
+          throw new Error(errorMessage);
+        }
+    
+        const data = await response.json();
+        console.log('Usuario registrado con éxito:', data);
         setSuccess(true);
         setError('');
-        setTimeout(() => {
-          navigate('/login'); // Redirige al login después de registrarse
-        }, 2000);
-      } else {
-        setError(data.message || 'Error desconocido');
+        setTimeout(() => navigate('/login'), 2000); // Redirigir al login
+      } catch (err) {
+        console.error('Error:', err);
+        setError(err.message || 'Error al conectar con el servidor');
       }
-    } catch (err) {
-      console.error('Error en la solicitud:', err);
-      setError(err.message || 'Error al conectar con el servidor');
-    }
-  };
+    };
 
   return (
     <div>

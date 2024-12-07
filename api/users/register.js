@@ -5,7 +5,7 @@ import User from '../models/User'; // Asegúrate de que la ruta sea correcta
 
 // Inicializar CORS
 const cors = Cors({
-  methods: ['POST'],
+  methods: ['POST'], // Solo permite métodos POST
   origin: '*',
 });
 
@@ -44,9 +44,15 @@ export default async function handler(req, res) {
     // Ejecutar CORS
     await runMiddleware(req, res, cors);
 
-    // Verificar método HTTP
+    // Validar método HTTP
     if (req.method !== 'POST') {
       return res.status(405).json({ message: 'Método no permitido' });
+    }
+
+    // Validar encabezado Content-Type
+    if (!req.headers['content-type']?.includes('multipart/form-data')) {
+      console.error('Content-Type no soportado o faltante');
+      return res.status(415).json({ message: 'Content-Type no soportado o faltante' });
     }
 
     const form = new multiparty.Form();
@@ -68,11 +74,11 @@ export default async function handler(req, res) {
       const profilePhoto = files.profilePhoto?.[0]?.originalFilename;
 
       if (!name || !email || !password || !userType || !profilePhoto) {
-        console.log('Error: Faltan campos obligatorios');
+        console.error('Error: Faltan campos obligatorios');
         return res.status(400).json({ message: 'Faltan campos obligatorios' });
       }
 
-      // Conexión a la base de datos
+      // Conectar a la base de datos
       await connectToDatabase();
 
       // Verificar si el usuario ya existe
