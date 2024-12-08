@@ -28,10 +28,7 @@ const connectToDatabase = async () => {
 
   try {
     console.log('Conectando a MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI); // Simplificado, sin opciones obsoletas
     console.log('Conexión a MongoDB establecida');
   } catch (error) {
     console.error('Error de conexión con MongoDB:', error);
@@ -79,7 +76,7 @@ export default async function handler(req, res) {
     const newUser = new User({
       name,
       email,
-      password, // Asegúrate de encriptar esta contraseña en producción
+      password, // En producción, asegúrate de encriptar esta contraseña con bcrypt u otra librería
       userType,
       profilePhoto, // Guardamos la URL de la imagen
     });
