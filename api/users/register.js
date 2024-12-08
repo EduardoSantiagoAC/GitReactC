@@ -8,6 +8,7 @@ const cors = Cors({
   origin: '*',
 });
 
+// Middleware para ejecutar CORS
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result) => {
@@ -27,11 +28,11 @@ const connectToDatabase = async () => {
   }
 
   try {
-    console.log('Conectando a MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI); // Simplificado, sin opciones obsoletas
+    console.log('Intentando conectar a MongoDB...');
+    await mongoose.connect(process.env.MONGODB_URI); // Usa la URI desde las variables de entorno
     console.log('Conexión a MongoDB establecida');
   } catch (error) {
-    console.error('Error de conexión con MongoDB:', error);
+    console.error('Error de conexión con MongoDB:', error.message);
     throw new Error('No se pudo conectar a la base de datos');
   }
 };
@@ -88,7 +89,7 @@ export default async function handler(req, res) {
     // Responder con éxito
     return res.status(200).json({ message: 'Usuario registrado con éxito' });
   } catch (error) {
-    console.error('Error inesperado en el servidor:', error);
+    console.error('Error inesperado en el servidor:', error.message);
     return res.status(500).json({ message: 'Error interno del servidor' });
   }
 }
