@@ -1,21 +1,22 @@
-// /config/db.js
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
-// Cargar variables de entorno
-dotenv.config();
+const connectToDatabase = async () => {
+  if (mongoose.connections[0].readyState) {
+    console.log('Ya conectado a MongoDB');
+    return;
+  }
 
-const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    console.log('Intentando conectar a MongoDB...');
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log('Conexión a MongoDB exitosa');
+    console.log('Conexión establecida con MongoDB');
   } catch (error) {
-    console.error('Error de conexión a MongoDB:', error.message);
-    process.exit(1); // Terminar el proceso si la conexión falla
+    console.error('Error de conexión con MongoDB:', error.message);
+    throw new Error('No se pudo conectar a la base de datos');
   }
 };
 
-export default connectDB;
+export default connectToDatabase;

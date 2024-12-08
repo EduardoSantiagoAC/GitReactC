@@ -1,5 +1,5 @@
 import Cors from 'cors';
-import mongoose from 'mongoose';
+import connectToDatabase from '../config/db'; // Importar la función desde db.js
 import User from '../models/User'; // Asegúrate de que la ruta sea correcta
 
 // Inicializar CORS
@@ -19,23 +19,6 @@ function runMiddleware(req, res, fn) {
     });
   });
 }
-
-// Función para conectar a MongoDB
-const connectToDatabase = async () => {
-  if (mongoose.connections[0].readyState) {
-    console.log('Ya estamos conectados a MongoDB');
-    return;
-  }
-
-  try {
-    console.log('Intentando conectar a MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI); // Usa la URI desde las variables de entorno
-    console.log('Conexión a MongoDB establecida');
-  } catch (error) {
-    console.error('Error de conexión con MongoDB:', error.message);
-    throw new Error('No se pudo conectar a la base de datos');
-  }
-};
 
 // Endpoint principal
 export default async function handler(req, res) {
