@@ -10,13 +10,13 @@ const Login = ({ onLogin }) => {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  // Maneja los cambios en los campos del formulario
+  // Manejar los cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Maneja el envío del formulario
+  // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -29,8 +29,8 @@ const Login = ({ onLogin }) => {
     }
 
     try {
-      // Llamada al backend
-      const response = await fetch('https://git-react-c.vercel.app//api/users/login', {
+      // Llamada al backend utilizando una ruta relativa
+      const response = await fetch('/api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
