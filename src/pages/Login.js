@@ -9,26 +9,51 @@ const Login = ({ onLogin }) => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Manejar los cambios en los inputs del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  // Manejar el envío del formulario
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { email, password } = formData;
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find((u) => u.email === email && u.password === password);
 
-    if (!user) {
-      setError('Correo o contraseña incorrectos.');
+    // Validar que los campos no estén vacíos
+    if (!email || !password) {
+      setError('Por favor, completa todos los campos.');
       return;
     }
 
-    setError('');
-    onLogin(user); // Pasa los datos del usuario autenticado al estado global
-    navigate('/profile'); // Redirige al perfil del usuario
+    try {
+      // Llamar al backend para autenticar al usuario
+      const response = await fetch('https://git-react-c.vercel.app//api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al iniciar sesión');
+      }
+
+      const data = await response.json();
+      console.log('Datos del usuario:', data.user);
+
+      // Pasar los datos del usuario autenticado al estado global
+      onLogin(data.user);
+
+      // Redirigir al perfil del usuario
+      navigate('/profile');
+    } catch (err) {
+      console.error('Error al iniciar sesión:', err.message);
+      setError(err.message || 'Error al conectar con el servidor');
+    }
   };
 
   return (
