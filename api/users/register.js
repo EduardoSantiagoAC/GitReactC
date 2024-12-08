@@ -1,5 +1,4 @@
 import Cors from 'cors';
-import multiparty from 'multiparty';
 import mongoose from 'mongoose';
 import User from '../models/User'; // Asegúrate de que la ruta sea correcta
 
@@ -46,55 +45,33 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
-    const contentType = req.headers['content-type'] || '';
-    if (!contentType.includes('multipart/form-data')) {
-      console.error('Content-Type no soportado o faltante');
-      return res.status(415).json({ message: 'Content-Type no soportado o faltante' });
+    const { name, email, password, userType, profilePhoto } = req.body;
+
+    if (!name || !email || !password || !userType || !profilePhoto) {
+      console.error('Error: Faltan campos obligatorios');
+      return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    const form = new multiparty.Form();
+    await connectToDatabase();
 
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        console.error('Error al procesar los datos:', err);
-        return res.status(500).json({ message: 'Error al procesar el formulario' });
-      }
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      console.log('El correo ya está registrado');
+      return res.status(400).json({ message: 'El correo ya está registrado' });
+    }
 
-      console.log('Campos:', fields);
-      console.log('Archivos:', files);
-
-      const name = fields.name?.[0];
-      const email = fields.email?.[0];
-      const password = fields.password?.[0];
-      const userType = fields.userType?.[0];
-      const profilePhoto = files.profilePhoto?.[0]?.originalFilename;
-
-      if (!name || !email || !password || !userType || !profilePhoto) {
-        console.error('Error: Faltan campos obligatorios');
-        return res.status(400).json({ message: 'Faltan campos obligatorios' });
-      }
-
-      await connectToDatabase();
-
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        console.log('El correo ya está registrado');
-        return res.status(400).json({ message: 'El correo ya está registrado' });
-      }
-
-      const newUser = new User({
-        name,
-        email,
-        password,
-        userType,
-        profilePhoto,
-      });
-
-      await newUser.save();
-      console.log('Usuario registrado con éxito');
-
-      return res.status(200).json({ message: 'Usuario registrado con éxito' });
+    const newUser = new User({
+      name,
+      email,
+      password, // Asegúrate de encriptar la contraseña antes de guardar
+      userType,
+      profilePhoto,
     });
+
+    await newUser.save();
+    console.log('Usuario registrado con éxito');
+
+    return res.status(200).json({ message: 'Usuario registrado con éxito' });
   } catch (error) {
     console.error('Error inesperado en el servidor:', error);
     return res.status(500).json({ message: 'Error interno del servidor' });

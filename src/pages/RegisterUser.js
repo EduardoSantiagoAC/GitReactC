@@ -41,26 +41,32 @@ const RegisterUser = () => {
       return;
     }
 
-    // Crear un objeto FormData para enviar al backend
-    const formDataToSend = new FormData();
-    formDataToSend.append('name', name);
-    formDataToSend.append('email', email);
-    formDataToSend.append('password', password);
-    formDataToSend.append('userType', userType);
-    formDataToSend.append('profilePhoto', profilePhoto);
-
     try {
-      // Hacer la solicitud a la API con fetch
-      const response = await fetch('https://git-react-c.vercel.app/api/users/register', {
+      // Subir la foto a Cloudinary
+      const uploadData = new FormData();
+      uploadData.append('file', profilePhoto);
+      uploadData.append('upload_preset', 'YOUR_UPLOAD_PRESET'); // Reemplaza con tu preset de Cloudinary
+
+      const uploadResponse = await fetch('https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload', {
         method: 'POST',
-        body: formDataToSend, // No configures manualmente Content-Type
+        body: uploadData,
       });
 
-      // Verificar si la respuesta fue exitosa
+      if (!uploadResponse.ok) throw new Error('Error al subir la imagen');
+
+      const uploadResult = await uploadResponse.json();
+      const photoUrl = uploadResult.secure_url;
+
+      // Registrar el usuario
+      const response = await fetch('/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, userType, profilePhoto: photoUrl }),
+      });
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null); // Manejar errores que no sean JSON
-        const errorMessage = errorData?.message || 'Hubo un error al procesar la solicitud';
-        throw new Error(errorMessage);
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Hubo un error al registrar el usuario');
       }
 
       const data = await response.json();
