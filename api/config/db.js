@@ -8,13 +8,10 @@ const connectToDatabase = async () => {
 
   try {
     console.log('Intentando conectar a MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI); // No se incluyen opciones obsoletas
     console.log('Conexión establecida con MongoDB');
   } catch (error) {
-    console.error('Error de conexión con MongoDB:', error.message);
+    console.error('Error al conectar a MongoDB:', error.message);
     throw new Error('No se pudo conectar a la base de datos');
   }
 };
