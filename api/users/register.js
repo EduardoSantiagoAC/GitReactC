@@ -1,14 +1,14 @@
+import bcrypt from 'bcrypt';
 import Cors from 'cors';
-import connectToDatabase from '../config/db'; // Importar la función desde db.js
-import User from '../models/User'; // Asegúrate de que la ruta sea correcta
+import connectToDatabase from '../config/db';
+import User from '../models/User';
 
-// Inicializar CORS
+// Configuración de CORS
 const cors = Cors({
   methods: ['POST'], // Solo permite métodos POST
   origin: '*',
 });
 
-// Middleware para ejecutar CORS
 function runMiddleware(req, res, fn) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result) => {
@@ -20,7 +20,6 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-// Endpoint principal
 export default async function handler(req, res) {
   try {
     console.log('Iniciando la función /api/users/register');
@@ -35,7 +34,6 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
-    // Validar los datos de la solicitud
     const { name, email, password, userType, profilePhoto } = req.body;
     console.log('Datos recibidos:', { name, email, userType, profilePhoto });
 
@@ -44,7 +42,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
-    // Conectar a la base de datos
+    // Conectar a MongoDB
     await connectToDatabase();
 
     // Verificar si el usuario ya existe
@@ -55,14 +53,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'El correo ya está registrado' });
     }
 
+    // Encriptar la contraseña
+    console.log('Encriptando la contraseña...');
+    const hashedPassword = await bcrypt.hash(password, 10); // Genera un hash con un salt de 10 rondas
+
     // Crear un nuevo usuario
     console.log('Creando un nuevo usuario...');
     const newUser = new User({
       name,
       email,
-      password, // En producción, asegúrate de encriptar esta contraseña con bcrypt u otra librería
+      password: hashedPassword, // Guardar la contraseña encriptada
       userType,
-      profilePhoto, // Guardamos la URL de la imagen
+      profilePhoto,
     });
 
     // Guardar el usuario en la base de datos
