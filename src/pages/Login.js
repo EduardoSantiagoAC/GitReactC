@@ -7,15 +7,16 @@ const Login = ({ onLogin }) => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
-  // Manejar los cambios en los inputs del formulario
+  // Maneja los cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Manejar el envío del formulario
+  // Maneja el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -28,7 +29,7 @@ const Login = ({ onLogin }) => {
     }
 
     try {
-      // Llamar al backend para autenticar al usuario
+      // Llamada al backend
       const response = await fetch('https://git-react-c.vercel.app//api/users/login', {
         method: 'POST',
         headers: {
@@ -37,19 +38,24 @@ const Login = ({ onLogin }) => {
         body: JSON.stringify({ email, password }),
       });
 
+      // Verificar si la respuesta fue exitosa
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al iniciar sesión');
+        const errorMessage = errorData?.message || 'Error al iniciar sesión';
+        throw new Error(errorMessage);
       }
 
+      // Procesar los datos del usuario
       const data = await response.json();
-      console.log('Datos del usuario:', data.user);
+      console.log('Inicio de sesión exitoso:', data);
 
-      // Pasar los datos del usuario autenticado al estado global
+      // Pasar los datos del usuario al estado global
+      setError('');
+      setSuccess(true);
       onLogin(data.user);
 
       // Redirigir al perfil del usuario
-      navigate('/profile');
+      setTimeout(() => navigate('/profile'), 2000);
     } catch (err) {
       console.error('Error al iniciar sesión:', err.message);
       setError(err.message || 'Error al conectar con el servidor');
@@ -62,6 +68,7 @@ const Login = ({ onLogin }) => {
         <h1 className="text-3xl font-bold text-[#B4789D] text-center mb-6">Iniciar Sesión</h1>
 
         {error && <p className="text-[#B4789D] text-center mb-4">{error}</p>}
+        {success && <p className="text-green-500 text-center mb-4">Inicio de sesión exitoso!</p>}
 
         <form onSubmit={handleSubmit}>
           <label className="block text-black mb-2">Correo Electrónico</label>
