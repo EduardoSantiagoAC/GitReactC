@@ -47,7 +47,7 @@ const RegisterUser = () => {
       uploadData.append('file', profilePhoto);
       uploadData.append('upload_preset', 'YOUR_UPLOAD_PRESET'); // Reemplaza con tu preset de Cloudinary
 
-      const uploadResponse = await fetch('https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload', {
+      const uploadResponse = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
         method: 'POST',
         body: uploadData,
       });
