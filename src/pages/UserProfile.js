@@ -1,36 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const UserProfile = ({ user }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [editingPet, setEditingPet] = useState(null);
-  const [pets, setPets] = useState([
-    {
-      id: 1,
-      name: 'Biscuit',
-      type: 'Perro',
-      breed: 'Golden Retriever',
-      age: 3,
-      reviews: [
-        { id: 1, reviewer: 'Juan Pérez', rating: 5, comment: 'Buddy fue increíble, muy amigable.' },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Bigotes',
-      type: 'Gato',
-      breed: 'Gato',
-      age: 2,
-      reviews: [],
-    },
-  ]);
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      petName: 'Buddy',
-      status: 'Aprobado',
-      date: '2023-11-27',
-    },
-  ]);
+  const [pets, setPets] = useState([]);
+  const [loadingPets, setLoadingPets] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Obtener las mascotas registradas por el usuario
+  useEffect(() => {
+    const fetchUserPets = async () => {
+      try {
+        const response = await fetch(`/api/pets/getUserPets?userId=${user.id}`);
+        if (!response.ok) {
+          throw new Error('Error al obtener las mascotas del usuario.');
+        }
+        const data = await response.json();
+        setPets(data.pets);
+        setLoadingPets(false);
+      } catch (error) {
+        setError(error.message);
+        setLoadingPets(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchUserPets();
+    }
+  }, [user]);
 
   const handleEditPet = (pet) => {
     setEditingPet(pet);
@@ -63,53 +60,45 @@ const UserProfile = ({ user }) => {
         return (
           <div>
             <h2 className="text-2xl font-semibold text-black mb-6">Mascotas Publicadas</h2>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {pets.map((pet) => (
-                <li
-                  key={pet.id}
-                  className="bg-[#E7D3BF] p-4 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-2"
-                >
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 bg-[#D5ACC5] rounded-full overflow-hidden">
-                      <img
-                        src={`https://via.placeholder.com/150`}
-                        alt={pet.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-black">{pet.name}</h3>
-                      <p className="text-sm text-black">
-                        {`${pet.type} - ${pet.breed} - ${pet.age} años`}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-black text-sm space-y-2">
-                    {pet.reviews.length > 0 ? (
-                      pet.reviews.map((review) => (
-                        <div
-                          key={review.id}
-                          className="flex items-center justify-between bg-[#D5ACC5] p-2 rounded-lg"
-                        >
-                          <p className="flex-1">
-                            <strong>{review.reviewer}:</strong> "{review.comment}"
-                          </p>
-                          <p className="ml-4 text-black">{'⭐'.repeat(review.rating)}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-400 italic">No hay reseñas para esta mascota.</p>
-                    )}
-                  </div>
-                  <button
-                    className="mt-4 w-full bg-[#B4789D] text-white py-2 rounded-md hover:bg-[#C6A89C] transition-colors"
-                    onClick={() => handleEditPet(pet)}
+            {loadingPets ? (
+              <p className="text-gray-500 italic">Cargando mascotas...</p>
+            ) : error ? (
+              <p className="text-red-500 italic">{error}</p>
+            ) : pets.length === 0 ? (
+              <p className="text-gray-400 italic">No has registrado ninguna mascota.</p>
+            ) : (
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {pets.map((pet) => (
+                  <li
+                    key={pet.id}
+                    className="bg-[#E7D3BF] p-4 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-2"
                   >
-                    ✏️ Editar
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 bg-[#D5ACC5] rounded-full overflow-hidden">
+                        <img
+                          src={pet.image || 'https://via.placeholder.com/150'}
+                          alt={pet.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-black">{pet.name}</h3>
+                        <p className="text-sm text-black">
+                          {`${pet.type} - ${pet.breed} - ${pet.age} años`}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-black text-sm">{pet.description}</p>
+                    <button
+                      className="mt-4 w-full bg-[#B4789D] text-white py-2 rounded-md hover:bg-[#C6A89C] transition-colors"
+                      onClick={() => handleEditPet(pet)}
+                    >
+                      ✏️ Editar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         );
 

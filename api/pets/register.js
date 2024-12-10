@@ -28,6 +28,7 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
+    // Conectar a la base de datos
     await connectToDatabase();
 
     const {
@@ -42,8 +43,10 @@ export default async function handler(req, res) {
       description,
       price,
       image,
+      ownerId, // Nuevo campo para asociar la mascota con un usuario
     } = req.body;
 
+    // Validar que todos los campos requeridos estén presentes
     if (
       !name ||
       !type ||
@@ -55,11 +58,13 @@ export default async function handler(req, res) {
       !food ||
       !description ||
       !price ||
-      !image
+      !image ||
+      !ownerId // Validar que se pase el ID del usuario
     ) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
 
+    // Crear una nueva mascota con los datos proporcionados
     const newPet = new Pet({
       name,
       type,
@@ -72,13 +77,15 @@ export default async function handler(req, res) {
       description,
       price,
       image,
+      ownerId, // Asociar la mascota al ID del usuario
     });
 
+    // Guardar la mascota en la base de datos
     await newPet.save();
 
     res.status(201).json({ message: 'Mascota registrada exitosamente.', pet: newPet });
   } catch (error) {
-    console.error(error);
+    console.error('Error al registrar la mascota:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 }
