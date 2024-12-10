@@ -111,8 +111,12 @@ const AddPet = () => {
       const imageResult = await imageResponse.json();
       const imageUrl = imageResult.secure_url;
 
-      // Obtener automáticamente el ID del propietario desde el almacenamiento local o la sesión
-      const ownerId = localStorage.getItem('userId') || 'defaultOwnerId'; // Reemplaza con la lógica para obtener el ID del usuario actual
+      // Obtener el ID del usuario desde localStorage o sesión
+      const ownerId = localStorage.getItem('userId'); // Asegúrate de que el ID del usuario esté guardado en el almacenamiento local
+
+      if (!ownerId) {
+        throw new Error('No se encontró el ID del propietario. Inicia sesión para continuar.');
+      }
 
       // Subir datos de la mascota al backend
       const petData = {
@@ -127,7 +131,7 @@ const AddPet = () => {
         description,
         price,
         image: imageUrl,
-        ownerId, // Agregar automáticamente el propietario
+        ownerId, // Agregar el ID del propietario
       };
 
       const response = await fetch('/api/pets/register', {
@@ -212,14 +216,33 @@ const AddPet = () => {
           </div>
 
           {/* Campos del Formulario */}
-          {/* Aquí se mantienen todos los campos originales como nombre, tipo, clasificación, raza, tamaño, edad, dieta, etc. */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Nombre</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Ej: Buddy"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
 
-          <button
-            type="submit"
-            className="col-span-full bg-[#B4789D] text-white py-3 rounded-lg hover:bg-[#C6A89C] transition-all"
-          >
-            Registrar Mascota
-          </button>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Tipo</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            >
+              <option value="">Selecciona un tipo</option>
+              <option value="Perro">Perro</option>
+              <option value="Gato">Gato</option>
+            </select>
+          </div>
+
+          {/* Mantén todos los campos originales aquí */}
         </form>
       </div>
     </div>
