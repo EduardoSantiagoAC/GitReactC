@@ -12,6 +12,7 @@ const AddPet = () => {
     food: '',
     description: '',
     price: '',
+    ownerId: '', // Nuevo campo para vincular mascota con usuario
   });
 
   const [imageFile, setImageFile] = useState(null); // Imagen de la mascota
@@ -21,6 +22,7 @@ const AddPet = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // Manejar cambios en los inputs del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -29,6 +31,7 @@ const AddPet = () => {
     });
   };
 
+  // Manejar la carga de la imagen
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -37,14 +40,17 @@ const AddPet = () => {
     }
   };
 
+  // Manejar la carga de la cartilla de vacunación
   const handleVaccinationChange = (e) => {
     setVaccinationFile(e.target.files[0]);
   };
 
+  // Manejar la carga del certificado o licencia (opcional)
   const handleLicenseChange = (e) => {
     setLicenseFile(e.target.files[0]);
   };
 
+  // Enviar el formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -59,8 +65,10 @@ const AddPet = () => {
       food,
       description,
       price,
+      ownerId, // Asegúrate de vincular al propietario
     } = formData;
 
+    // Validar que todos los campos obligatorios estén completos
     if (
       !name ||
       !type ||
@@ -124,6 +132,7 @@ const AddPet = () => {
         description,
         price,
         image: imageUrl,
+        ownerId, // Asignar al usuario propietario
       };
 
       const response = await fetch('/api/pets/register', {
@@ -140,6 +149,7 @@ const AddPet = () => {
       const data = await response.json();
       console.log('Mascota registrada con éxito:', data);
 
+      // Resetear formulario y mostrar éxito
       setSuccess(true);
       setFormData({
         name: '',
@@ -152,6 +162,7 @@ const AddPet = () => {
         food: '',
         description: '',
         price: '',
+        ownerId: '',
       });
       setImageFile(null);
       setVaccinationFile(null);
@@ -220,7 +231,19 @@ const AddPet = () => {
             />
           </div>
 
-          {/* Otros campos (similar al código existente) */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Propietario ID</label>
+            <input
+              type="text"
+              name="ownerId"
+              value={formData.ownerId}
+              onChange={handleChange}
+              placeholder="ID del Propietario"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          {/* Los demás campos como tipo, clasificación, raza, etc., permanecen igual */}
 
           <button
             type="submit"
