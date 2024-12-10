@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import SearchBar from '../components/SearchBar';
 
 const categories = [
   { id: 1, name: 'Todos', icon: '🐾' },
@@ -198,20 +199,116 @@ const caregivers = [
 ];
 
 
-const Home = () => {
+const foods = [
+  {
+    id: 1,
+    name: "Royal Canin Medium Puppy",
+    type: "Perro",
+    classification: "Alimento premium",
+    description: "Alimento seco para cachorros de raza mediana hasta los 12 meses.",
+    price: 1200,
+    image: "https://th.bing.com/th/id/OIP.Q2zPDeqRMaZW5Bk0rCX-rAHaHa?rs=1&pid=ImgDetMain",
+  },
+  {
+    id: 2,
+    name: "Hill's Science Diet Adult",
+    type: "Perro",
+    classification: "Alimento premium",
+    description: "Alimento para perros adultos con sabor a pollo y cebada.",
+    price: 1350,
+    image: "https://www.petcircle.com.au/petcircle-assets/images/products/z/hills-science-diet-adult-dry-dog-food.png",
+  },
+  {
+    id: 3,
+    name: "Whiskas Carne y Pollo",
+    type: "Gato",
+    classification: "Alimento regular",
+    description: "Alimento seco para gatos adultos con mezcla de sabores de carne y pollo.",
+    price: 500,
+    image: "https://th.bing.com/th?id=OPHS.trU7S58%2bSiemXQ474C474&w=300&h=300&o=5&pid=21.1",
+  },
+  {
+    id: 4,
+    name: "Purina Pro Plan Veterinary Diets",
+    type: "Perro",
+    classification: "Dietético",
+    description: "Dieta veterinaria para perros con problemas digestivos.",
+    price: 1700,
+    image: "https://th.bing.com/th/id/OIP.TPmA7_6ZaC5zvGPmwZ0NogHaHa?rs=1&pid=ImgDetMain",
+  },
+  {
+    id: 5,
+    name: "Fancy Feast Gourmet Filetes",
+    type: "Gato",
+    classification: "Snacks",
+    description: "Comida húmeda para gatos, hecha de filetes de pollo en salsa.",
+    price: 350,
+    image: "https://cdn.shopify.com/s/files/1/0247/9124/2351/products/fancy-feast-classic-pate.jpg",
+  },
+  {
+    id: 6,
+    name: "Pedigree Dentastix",
+    type: "Perro",
+    classification: "Snacks",
+    description: "Snacks para perros que ayudan a mantener dientes limpios y saludables.",
+    price: 250,
+    image: "https://www.pedigree.com.mx/wp-content/uploads/2021/05/dentastix-fresh-gigante.jpg",
+  },
+  {
+    id: 7,
+    name: "Royal Canin Kitten",
+    type: "Gato",
+    classification: "Alimento premium",
+    description: "Alimento seco para gatitos hasta los 12 meses de edad.",
+    price: 1150,
+    image: "https://cdn.hills-cdn.com/dam/product-images/hills/pdp/kitten-health-dry-original.jpg",
+  },
+  {
+    id: 8,
+    name: "Canidae PURE Salmon",
+    type: "Perro",
+    classification: "Natural",
+    description: "Alimento para perros con ingredientes limitados y salmón como proteína principal.",
+    price: 1800,
+    image: "https://canidae.com/media/2008/canidae-dog-pure-salmon-24lb-front-1.jpg",
+  },
+  {
+    id: 9,
+    name: "Sheba Pate Selection",
+    type: "Gato",
+    classification: "Snacks",
+    description: "Pate para gatos con sabores seleccionados de carne y pescado.",
+    price: 400,
+    image: "https://m.media-amazon.com/images/I/71xd9BtDm+L._SL1500_.jpg",
+  },
+  {
+    id: 10,
+    name: "Hill's Prescription Diet Metabolic",
+    type: "Perro",
+    classification: "Dietético",
+    description: "Alimento seco para perros que ayuda a controlar el peso.",
+    price: 1900,
+    image: "https://images.hillspet.com/dam/hills/caas/product/proplan/dog-mobility-hills-prescription-diet-joint-care-dry-food-canine-bag-sm.jpg",
+  },
+];
+
+const Home = ({ pets, caregivers }) => {
   const navigate = useNavigate();
+  const [currentSection, setCurrentSection] = useState('mascotas');
   const [activeCategory, setActiveCategory] = useState('Todos');
-  const [search, setSearch] = useState('');
+  const [foodFilter, setFoodFilter] = useState('Todos');
   const [caregiverFilters, setCaregiverFilters] = useState({
     gender: 'Todos',
     rating: 'Todos',
     experience: 'Todos',
   });
 
-  const [currentSection, setCurrentSection] = useState('mascotas'); // 'mascotas' o 'cuidadores'
-
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
+  };
+
+  const handleFoodFilterChange = (type) => {
+    setFoodFilter(type);
   };
 
   const handleCaregiverFilterChange = (e) => {
@@ -221,22 +318,17 @@ const Home = () => {
     });
   };
 
+  const filteredFoods = foods.filter(
+    (food) => foodFilter === 'Todos' || food.type === foodFilter
+  );
+
   const filteredPets = pets.filter((pet) => {
-    const matchesCategory =
+    return (
       activeCategory === 'Todos' ||
       pet.type === activeCategory ||
-      pet.classification === activeCategory;
-    const matchesSearch =
-      search === '' ||
-      pet.name.toLowerCase().includes(search.toLowerCase()) ||
-      pet.description.toLowerCase().includes(search.toLowerCase());
-
-    return matchesCategory && matchesSearch;
+      pet.classification === activeCategory
+    );
   });
-
-  const handlePetClick = (id) => {
-    navigate(`/pets/${id}`);
-  };
 
   const filteredCaregivers = caregivers.filter((caregiver) => {
     const matchesGender =
@@ -251,9 +343,19 @@ const Home = () => {
     return matchesGender && matchesRating && matchesExperience;
   });
 
+  const handlePetClick = (id) => {
+    navigate(`/pets/${id}`);
+  };
+
+  const handleCaregiverClick = (id) => {
+    navigate(`/caregivers/${id}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E7D3BF] via-[#D5ACC5] to-[#B4789D] pt-24">
       <div className="max-w-7xl mx-auto px-4">
+        <SearchBar />
+
         <div className="flex justify-center mb-6">
           <motion.button
             className={`px-6 py-2 text-xl font-semibold rounded-full transition-all ${
@@ -275,28 +377,19 @@ const Home = () => {
           >
             Cuidadores
           </motion.button>
+          <motion.button
+            className={`px-6 py-2 text-xl font-semibold rounded-full transition-all ${
+              currentSection === 'alimentos' ? 'bg-[#B4789D] text-white' : 'bg-[#E7D3BF] text-black'
+            } hover:bg-[#C6A89C] hover:text-white`}
+            onClick={() => setCurrentSection('alimentos')}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            Alimentos
+          </motion.button>
         </div>
 
-        <motion.div
-          className="flex justify-center mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <div className="relative w-full max-w-3xl">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por nombre o descripción..."
-              className="w-full p-4 pr-12 border border-[#C6A89C] rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-[#B4789D] text-lg"
-            />
-            <button className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-[#B4789D] text-white p-2 rounded-full shadow-md hover:bg-[#C6A89C] transition-all">
-              🔍
-            </button>
-          </div>
-        </motion.div>
-
+        {/* Categorías de mascotas */}
         {currentSection === 'mascotas' && (
           <>
             <motion.div
@@ -322,7 +415,6 @@ const Home = () => {
                 </motion.button>
               ))}
             </motion.div>
-
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               initial={{ opacity: 0 }}
@@ -337,19 +429,15 @@ const Home = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="w-full h-40 bg-[#D5ACC5] relative">
-                    <img
-                      src={pet.image}
-                      alt={pet.name}
-                      className="w-32 h-32 object-cover rounded-full border-4 border-white shadow-xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                    />
-                  </div>
+                  <img
+                    src={pet.image}
+                    alt={pet.name}
+                    className="w-full h-40 object-cover"
+                  />
                   <div className="p-4 text-center">
                     <h2 className="text-xl font-semibold text-black">{pet.name}</h2>
                     <p className="text-black text-sm">{pet.description}</p>
-                    <div className="mt-2">
-                      <p className="text-[#C6A89C]">Precio: ${pet.price}/día</p>
-                    </div>
+                    <p className="text-[#C6A89C] mt-2">Precio: ${pet.price}/día</p>
                   </div>
                 </motion.div>
               ))}
@@ -357,6 +445,7 @@ const Home = () => {
           </>
         )}
 
+        {/* Sección de cuidadores */}
         {currentSection === 'cuidadores' && (
           <>
             <motion.div
@@ -393,7 +482,6 @@ const Home = () => {
                 <option value="5">5+ años</option>
               </select>
             </motion.div>
-
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               initial={{ opacity: 0 }}
@@ -403,24 +491,74 @@ const Home = () => {
               {filteredCaregivers.map((caregiver) => (
                 <motion.div
                   key={caregiver.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all border border-[#C6A89C]"
+                  onClick={() => handleCaregiverClick(caregiver.id)}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all cursor-pointer border border-[#C6A89C]"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="w-full h-40 bg-[#D5ACC5] relative">
-                    <img
-                      src={caregiver.image}
-                      alt={caregiver.name}
-                      className="w-32 h-32 object-cover rounded-full border-4 border-white shadow-xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                    />
-                  </div>
+                  <img
+                    src={caregiver.image}
+                    alt={caregiver.name}
+                    className="w-full h-40 object-cover"
+                  />
                   <div className="p-4 text-center">
                     <h2 className="text-xl font-semibold text-black">{caregiver.name}</h2>
                     <p className="text-black text-sm">{caregiver.description}</p>
-                    <div className="mt-2">
-                      <p className="text-[#C6A89C]">Experiencia: {caregiver.experience} años</p>
-                      <p className="text-[#B4789D]">⭐ {caregiver.rating}</p>
-                    </div>
+                    <p className="text-[#C6A89C] mt-2">Experiencia: {caregiver.experience} años</p>
+                    <p className="text-[#B4789D]">⭐ {caregiver.rating}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
+        )}
+
+        {/* Sección de alimentos */}
+        {currentSection === 'alimentos' && (
+          <>
+            <div className="flex justify-center gap-4 mb-6">
+              <button
+                className="rounded-full px-4 py-2 bg-white shadow-md"
+                onClick={() => setFoodFilter('Todos')}
+              >
+                Todos
+              </button>
+              <button
+                className="rounded-full px-4 py-2 bg-white shadow-md"
+                onClick={() => setFoodFilter('Perro')}
+              >
+                Perro
+              </button>
+              <button
+                className="rounded-full px-4 py-2 bg-white shadow-md"
+                onClick={() => setFoodFilter('Gato')}
+              >
+                Gato
+              </button>
+            </div>
+
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              {filteredFoods.map((food) => (
+                <motion.div
+                  key={food.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all cursor-pointer border border-[#C6A89C]"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <img
+                    src={food.image}
+                    alt={food.name}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="p-4 text-center">
+                    <h2 className="text-xl font-semibold text-black">{food.name}</h2>
+                    <p className="text-black text-sm">{food.description}</p>
+                    <p className="text-[#C6A89C] mt-2">Precio: ${food.price}</p>
                   </div>
                 </motion.div>
               ))}
