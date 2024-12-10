@@ -111,13 +111,6 @@ const AddPet = () => {
       const imageResult = await imageResponse.json();
       const imageUrl = imageResult.secure_url;
 
-      // Obtener el ID del usuario desde localStorage o sesión
-      const ownerId = localStorage.getItem('userId'); // Asegúrate de que el ID del usuario esté guardado en el almacenamiento local
-
-      if (!ownerId) {
-        throw new Error('No se encontró el ID del propietario. Inicia sesión para continuar.');
-      }
-
       // Subir datos de la mascota al backend
       const petData = {
         name,
@@ -131,7 +124,6 @@ const AddPet = () => {
         description,
         price,
         image: imageUrl,
-        ownerId, // Agregar el ID del propietario
       };
 
       const response = await fetch('/api/pets/register', {
@@ -242,7 +234,123 @@ const AddPet = () => {
             </select>
           </div>
 
-          {/* Mantén todos los campos originales aquí */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Clasificación</label>
+            <select
+              name="classification"
+              value={formData.classification}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            >
+              <option value="">Selecciona una clasificación</option>
+              <option value="Compañía">Compañía</option>
+              <option value="Terapia">Terapia</option>
+              <option value="Apoyo">Apoyo</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Raza</label>
+            <input
+              type="text"
+              name="breed"
+              value={formData.breed}
+              onChange={handleChange}
+              placeholder="Ej: Golden Retriever"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Tamaño</label>
+            <select
+              name="size"
+              value={formData.size}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            >
+              <option value="">Selecciona un tamaño</option>
+              <option value="Pequeño">Pequeño</option>
+              <option value="Mediano">Mediano</option>
+              <option value="Grande">Grande</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Edad</label>
+            <input
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              placeholder="Ej: 3"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Dieta</label>
+            <input
+              type="text"
+              name="diet"
+              value={formData.diet}
+              onChange={handleChange}
+              placeholder="Ej: Sin gluten"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Comida Preferida</label>
+            <input
+              type="text"
+              name="food"
+              value={formData.food}
+              onChange={handleChange}
+              placeholder="Ej: Pollo"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Descripción</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Describe brevemente a la mascota"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            ></textarea>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Precio por Día</label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="Ej: 20"
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Cartilla de Vacunación</label>
+            <input
+              type="file"
+              accept=".pdf,.png,.jpg,.jpeg"
+              onChange={handleVaccinationChange}
+              className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="col-span-full bg-[#B4789D] text-white py-3 rounded-lg hover:bg-[#C6A89C] transition-all"
+          >
+            Registrar Mascota
+          </button>
         </form>
       </div>
     </div>
