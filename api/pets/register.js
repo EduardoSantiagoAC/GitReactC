@@ -1,6 +1,5 @@
 import connectToDatabase from '../config/db'; // Conexión a la base de datos
 import Pet from '../models/Pet';
-
 import Cors from 'cors';
 
 // Inicializar CORS
@@ -28,7 +27,6 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
-    // Conectar a la base de datos
     await connectToDatabase();
 
     const {
@@ -43,10 +41,9 @@ export default async function handler(req, res) {
       description,
       price,
       image,
-      ownerId, // Nuevo campo para asociar la mascota con un usuario
     } = req.body;
 
-    // Validar que todos los campos requeridos estén presentes
+    // Verificar que todos los campos requeridos estén presentes
     if (
       !name ||
       !type ||
@@ -58,13 +55,20 @@ export default async function handler(req, res) {
       !food ||
       !description ||
       !price ||
-      !image ||
-      !ownerId // Validar que se pase el ID del usuario
+      !image
     ) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
 
-    // Crear una nueva mascota con los datos proporcionados
+    // Obtener la ID del usuario desde la sesión o token
+    // Esto dependerá de cómo manejes la autenticación (por ejemplo, JWT o sesión)
+    const userId = req.user?.id || req.body.userId; // Ajusta según tu implementación
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado.' });
+    }
+
+    // Crear una nueva mascota con la ID del usuario
     const newPet = new Pet({
       name,
       type,
@@ -77,15 +81,15 @@ export default async function handler(req, res) {
       description,
       price,
       image,
-      ownerId, // Asociar la mascota al ID del usuario
+      userId, // Aquí se asigna la ID del usuario que registró la mascota
     });
 
-    // Guardar la mascota en la base de datos
+    // Guardar en la base de datos
     await newPet.save();
 
     res.status(201).json({ message: 'Mascota registrada exitosamente.', pet: newPet });
   } catch (error) {
-    console.error('Error al registrar la mascota:', error);
+    console.error(error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 }
