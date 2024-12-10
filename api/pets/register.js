@@ -1,5 +1,6 @@
 import connectToDatabase from '../config/db'; // Conexión a la base de datos
-import Pet from '../models/Pet'; // Modelo de mascota
+import Pet from '../models/Pet';
+
 import Cors from 'cors';
 
 // Inicializar CORS
