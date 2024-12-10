@@ -189,7 +189,7 @@ const AddPet = () => {
           </div>
 
           {/* Campos del Formulario */}
-          <div className="col-span-full">
+          <div>
             <label>Nombre</label>
             <input
               type="text"
@@ -200,7 +200,6 @@ const AddPet = () => {
               className="w-full p-3 border rounded"
             />
           </div>
-          {/* Resto de los campos */}
           <div>
             <label>Tipo</label>
             <select
@@ -209,17 +208,116 @@ const AddPet = () => {
               onChange={handleChange}
               className="w-full p-3 border rounded"
             >
-              <option value="">Seleccione un tipo</option>
+              <option value="">Selecciona un tipo</option>
               <option value="Perro">Perro</option>
               <option value="Gato">Gato</option>
             </select>
           </div>
-          {/* Otros campos (clasificación, precio, etc.) siguen el mismo patrón */}
-          {/* Botón de registro */}
+          <div>
+            <label>Clasificación</label>
+            <select
+              name="classification"
+              value={formData.classification}
+              onChange={handleChange}
+              className="w-full p-3 border rounded"
+            >
+              <option value="">Selecciona una clasificación</option>
+              <option value="Compañía">Compañía</option>
+              <option value="Terapia">Terapia</option>
+              <option value="Apoyo">Apoyo</option>
+            </select>
+          </div>
+          <div>
+            <label>Raza</label>
+            <input
+              type="text"
+              name="breed"
+              value={formData.breed}
+              onChange={handleChange}
+              placeholder="Ej: Golden Retriever"
+              className="w-full p-3 border rounded"
+            />
+          </div>
+          <div>
+            <label>Tamaño</label>
+            <select
+              name="size"
+              value={formData.size}
+              onChange={handleChange}
+              className="w-full p-3 border rounded"
+            >
+              <option value="">Selecciona un tamaño</option>
+              <option value="Pequeño">Pequeño</option>
+              <option value="Mediano">Mediano</option>
+              <option value="Grande">Grande</option>
+            </select>
+          </div>
+          <div>
+            <label>Edad</label>
+            <input
+              type="number"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              placeholder="Ej: 2"
+              className="w-full p-3 border rounded"
+            />
+          </div>
+          <div>
+            <label>Dieta</label>
+            <input
+              type="text"
+              name="diet"
+              value={formData.diet}
+              onChange={handleChange}
+              placeholder="Ej: Sin gluten"
+              className="w-full p-3 border rounded"
+            />
+          </div>
+          <div>
+            <label>Comida Preferida</label>
+            <input
+              type="text"
+              name="food"
+              value={formData.food}
+              onChange={handleChange}
+              placeholder="Ej: Pollo"
+              className="w-full p-3 border rounded"
+            />
+          </div>
+          <div className="col-span-full">
+            <label>Descripción</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Ej: Mascota amigable..."
+              className="w-full p-3 border rounded"
+            ></textarea>
+          </div>
+          <div className="col-span-full">
+            <label>Precio por Día</label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="Ej: 20"
+              className="w-full p-3 border rounded"
+            />
+          </div>
+          <div className="col-span-full">
+            <label>Cartilla de Vacunación</label>
+            <input
+              type="file"
+              onChange={handleVaccinationChange}
+              className="w-full p-3 border rounded"
+            />
+          </div>
           <div className="col-span-full">
             <button
               type="submit"
-              className="w-full bg-[#B4789D] text-white py-3 rounded-lg hover:bg-[#C6A89C] transition-all"
+              className="w-full bg-[#B4789D] text-white py-3 rounded hover:bg-[#C6A89C]"
             >
               Registrar Mascota
             </button>
