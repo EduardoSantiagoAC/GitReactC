@@ -13,11 +13,7 @@ const AddPet = () => {
     description: '',
     price: '',
   });
-    setFormData({ name: '', type: '', classification: '', breed: '', size: '', age: '', diet: '', food: '', description: '', price: '' });
-    setImageFile(null);
-    setVaccinationFile(null);
-    setLicenseFile(null);
-    setImagePreview('');
+    
 
 
   const [imageFile, setImageFile] = useState(null); // Imagen de la mascota
