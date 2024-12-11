@@ -19,9 +19,9 @@ const PetDetails = () => {
         }
         const data = await response.json();
         setPet(data.pet);
-        setLoading(false);
       } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };

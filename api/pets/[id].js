@@ -28,40 +28,44 @@ const handler = async (req, res) => {
 
     // Validar el método HTTP
     if (req.method !== 'GET') {
-      return res.status(405).json({ message: 'Método no permitido' });
+      return res.status(405).json({ success: false, message: 'Método no permitido.' });
     }
 
     // Conectar a la base de datos
     await connectToDatabase();
 
-    // Obtener el id de la mascota desde la URL
+    // Obtener el ID de la mascota desde la URL
     const { id } = req.query;
 
     if (!id) {
-      return res.status(400).json({ message: 'Se requiere un ID de mascota.' });
+      return res.status(400).json({ success: false, message: 'Se requiere un ID de mascota.' });
     }
 
-    // Verificar si el ID es válido
+    // Validar que el ID sea un ObjectId válido
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'El ID de la mascota no es válido.' });
+      return res.status(400).json({ success: false, message: 'El ID de la mascota no es válido.' });
     }
 
-    // Buscar la mascota por su ID
+    // Buscar la mascota por su ID en la base de datos
     const pet = await Pet.findById(id);
 
     if (!pet) {
-      return res.status(404).json({ message: 'No se encontró la mascota solicitada.' });
+      return res.status(404).json({ success: false, message: 'No se encontró la mascota solicitada.' });
     }
 
     // Responder con los detalles de la mascota
-    res.status(200).json({ 
-      success: true, 
-      message: 'Detalles de la mascota obtenidos con éxito', 
-      pet 
+    res.status(200).json({
+      success: true,
+      message: 'Detalles de la mascota obtenidos con éxito.',
+      pet,
     });
   } catch (error) {
     console.error('Error al obtener los detalles de la mascota:', error);
-    res.status(500).json({ message: 'Error interno del servidor.', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor.',
+      error: error.message,
+    });
   }
 };
 
