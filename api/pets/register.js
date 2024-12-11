@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     await connectToDatabase();
 
     // Verificar el token JWT enviado en los encabezados
+    
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
       return res.status(401).json({ message: 'Token no proporcionado. Usuario no autenticado.' });
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, process.env.JWT_SECRET); // Asegúrate de que JWT_SECRET esté definido
     } catch (error) {
       return res.status(401).json({ message: 'Token inválido o expirado. Por favor, inicia sesión nuevamente.' });
     }
@@ -54,6 +55,7 @@ export default async function handler(req, res) {
     if (!userId) {
       return res.status(401).json({ message: 'Usuario no autenticado.' });
     }
+
 
     // Extraer datos del cuerpo de la solicitud
     const {

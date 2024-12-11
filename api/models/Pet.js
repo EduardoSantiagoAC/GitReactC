@@ -1,19 +1,19 @@
 import mongoose from 'mongoose';
 
-const petSchema = new mongoose.Schema({
+const PetSchema = new mongoose.Schema({
   name: { type: String, required: true },
   type: { type: String, required: true },
   classification: { type: String, required: true },
-  description: { type: String },
+  breed: { type: String, required: true },
+  size: { type: String, required: true },
+  age: { type: Number, required: true },
+  diet: { type: String, required: true },
+  food: { type: String, required: true },
+  description: { type: String, required: true },
   price: { type: Number, required: true },
-  breed: { type: String },
-  size: { type: String },
-  age: { type: Number },
-  diet: { type: String },
-  food: { type: String },
   image: { type: String, required: true },
-  vaccination: { type: String },
-  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Relación con el usuario
-}, { timestamps: true });
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // <-- Esto es fundamental
+});
+
 
 export default mongoose.models.Pet || mongoose.model('Pet', petSchema);

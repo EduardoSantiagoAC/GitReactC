@@ -13,6 +13,12 @@ const AddPet = () => {
     description: '',
     price: '',
   });
+    setFormData({ name: '', type: '', classification: '', breed: '', size: '', age: '', diet: '', food: '', description: '', price: '' });
+    setImageFile(null);
+    setVaccinationFile(null);
+    setLicenseFile(null);
+    setImagePreview('');
+
 
   const [imageFile, setImageFile] = useState(null); // Imagen de la mascota
   const [vaccinationFile, setVaccinationFile] = useState(null); // Cartilla de vacunación
@@ -49,8 +55,9 @@ const AddPet = () => {
     e.preventDefault();
   
     try {
-      const token = localStorage.getItem('token'); // Obtener el token almacenado
+      const token = localStorage.getItem('token');
       if (!token) throw new Error('No autorizado. Por favor, inicia sesión nuevamente.');
+
   
       // Subir la imagen a Cloudinary (como ya lo haces)
       const imageData = new FormData();
@@ -72,10 +79,11 @@ const AddPet = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
+          Authorization: `Bearer ${token}`, // Aquí se envía el token
         },
         body: JSON.stringify(petData),
       });
+      
   
       if (!response.ok) {
         const errorData = await response.json();
@@ -91,7 +99,7 @@ const AddPet = () => {
       setError(err.message || 'Error al conectar con el servidor');
     }
   };
-
+  
 
   
   return (
