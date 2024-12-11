@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'; // Cambia a bcryptjs si tienes problemas con bcrypt
 import Cors from 'cors';
+import jwt from 'jsonwebtoken'; // Para generar el token JWT
 import connectToDatabase from '../config/db'; // Importa la función de conexión desde db.js
 import User from '../models/User'; // Asegúrate de que la ruta sea correcta
 
@@ -20,6 +21,9 @@ function runMiddleware(req, res, fn) {
     });
   });
 }
+
+// Clave secreta para JWT (asegúrate de almacenarla en variables de entorno)
+const JWT_SECRET = process.env.JWT_SECRET || 'tuClaveSecreta';
 
 // Endpoint principal
 export default async function handler(req, res) {
@@ -67,11 +71,24 @@ export default async function handler(req, res) {
     }
     console.log('Contraseña válida');
 
-    // Responder con los datos del usuario
+    // Generar un token JWT
+    const token = jwt.sign(
+      {
+        userId: user._id, // Incluye el userId en el payload del token
+        name: user.name,
+        email: user.email,
+      },
+      JWT_SECRET,
+      { expiresIn: '2h' } // Configura el tiempo de expiración del token
+    );
+
+    // Responder con los datos del usuario y el token
     console.log('Inicio de sesión exitoso');
     return res.status(200).json({
       message: 'Inicio de sesión exitoso',
+      token, // Devuelve el token JWT
       user: {
+        id: user._id, // Incluye el userId explícitamente
         name: user.name,
         email: user.email,
         userType: user.userType,

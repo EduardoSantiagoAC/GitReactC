@@ -11,10 +11,25 @@ const UserProfile = ({ user }) => {
   useEffect(() => {
     const fetchUserPets = async () => {
       try {
-        const response = await fetch(`/api/pets/getUserPets?userId=${user.id}`);
-        if (!response.ok) {
-          throw new Error('Error al obtener las mascotas del usuario.');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+          console.error('No se encontró el token de autenticación. Inicia sesión nuevamente.');
+          return;
         }
+
+        const response = await fetch('/api/pets/getAll', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Error al obtener las mascotas del usuario.');
+        }
+
         const data = await response.json();
         setPets(data.pets);
         setLoadingPets(false);
@@ -70,7 +85,7 @@ const UserProfile = ({ user }) => {
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {pets.map((pet) => (
                   <li
-                    key={pet.id}
+                    key={pet._id}
                     className="bg-[#E7D3BF] p-4 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-2"
                   >
                     <div className="flex items-center gap-4 mb-4">

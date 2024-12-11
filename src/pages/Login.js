@@ -19,42 +19,31 @@ const Login = ({ onLogin }) => {
   // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const { email, password } = formData;
-
-    // Validar que los campos no estén vacíos
-    if (!email || !password) {
-      setError('Por favor, completa todos los campos.');
-      return;
-    }
-
+  
     try {
-      // Llamada al backend utilizando una ruta relativa
       const response = await fetch('/api/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-      // Verificar si la respuesta fue exitosa
+  
       if (!response.ok) {
         const errorData = await response.json();
-        const errorMessage = errorData?.message || 'Error al iniciar sesión';
-        throw new Error(errorMessage);
+        throw new Error(errorData.message || 'Error al iniciar sesión');
       }
-
-      // Procesar los datos del usuario
+  
       const data = await response.json();
       console.log('Inicio de sesión exitoso:', data);
-
-      // Pasar los datos del usuario al estado global
-      setError('');
-      setSuccess(true);
+  
+      // Almacenar el token y el userId en localStorage
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.user.id);
+  
+      // Manejar estado global (opcional)
       onLogin(data.user);
-
-      // Redirigir al perfil del usuario
+  
       setTimeout(() => navigate('/profile'), 2000);
     } catch (err) {
       console.error('Error al iniciar sesión:', err.message);

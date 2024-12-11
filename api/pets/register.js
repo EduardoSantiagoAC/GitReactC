@@ -1,6 +1,7 @@
 import connectToDatabase from '../config/db'; // Conexión a la base de datos
 import Pet from '../models/Pet';
 import Cors from 'cors';
+import jwt from 'jsonwebtoken'; // Para verificar el token JWT
 
 // Inicializar CORS
 const cors = Cors({
@@ -19,16 +20,42 @@ function runMiddleware(req, res, fn) {
   });
 }
 
+// Clave secreta para JWT (asegúrate de almacenarla en variables de entorno)
+const JWT_SECRET = process.env.JWT_SECRET || 'tuClaveSecreta';
+
 export default async function handler(req, res) {
   try {
+    // Ejecutar middleware de CORS
     await runMiddleware(req, res, cors);
 
+    // Validar método HTTP
     if (req.method !== 'POST') {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
+    // Conectar a la base de datos
     await connectToDatabase();
 
+    // Verificar el token JWT enviado en los encabezados
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado. Usuario no autenticado.' });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+      return res.status(401).json({ message: 'Token inválido o expirado. Por favor, inicia sesión nuevamente.' });
+    }
+
+    // Extraer el userId del token decodificado
+    const userId = decoded.userId;
+    if (!userId) {
+      return res.status(401).json({ message: 'Usuario no autenticado.' });
+    }
+
+    // Extraer datos del cuerpo de la solicitud
     const {
       name,
       type,
@@ -60,14 +87,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
 
-    // Obtener la ID del usuario desde la sesión o token
-    // Esto dependerá de cómo manejes la autenticación (por ejemplo, JWT o sesión)
-    const userId = req.user?.id || req.body.userId; // Ajusta según tu implementación
-
-    if (!userId) {
-      return res.status(401).json({ message: 'Usuario no autenticado.' });
-    }
-
     // Crear una nueva mascota con la ID del usuario
     const newPet = new Pet({
       name,
@@ -81,7 +100,7 @@ export default async function handler(req, res) {
       description,
       price,
       image,
-      userId, // Aquí se asigna la ID del usuario que registró la mascota
+      userId, // Asignar automáticamente el userId del usuario autenticado
     });
 
     // Guardar en la base de datos
@@ -89,7 +108,7 @@ export default async function handler(req, res) {
 
     res.status(201).json({ message: 'Mascota registrada exitosamente.', pet: newPet });
   } catch (error) {
-    console.error(error);
+    console.error('Error al registrar la mascota:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });
   }
 }

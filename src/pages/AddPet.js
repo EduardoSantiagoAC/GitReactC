@@ -45,131 +45,52 @@ const AddPet = () => {
     setLicenseFile(e.target.files[0]);
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const {
-    name,
-    type,
-    classification,
-    breed,
-    size,
-    age,
-    diet,
-    food,
-    description,
-    price,
-  } = formData;
-
-  if (
-    !name ||
-    !type ||
-    !classification ||
-    !breed ||
-    !size ||
-    !age ||
-    !diet ||
-    !food ||
-    !description ||
-    !price ||
-    !imageFile ||
-    !vaccinationFile
-  ) {
-    setError(
-      'Todos los campos son obligatorios, incluida la imagen y la cartilla de vacunación.'
-    );
-    setSuccess(false);
-    return;
-  }
-
-  if ((classification === 'Terapia' || classification === 'Apoyo') && !licenseFile) {
-    setError('Debes subir un certificado o licencia para esta clasificación.');
-    setSuccess(false);
-    return;
-  }
-
-  setError('');
-
-  try {
-    // Subir imagen a Cloudinary
-    const imageData = new FormData();
-    imageData.append('file', imageFile);
-    imageData.append('upload_preset', 'default-preset'); // Reemplaza con tu preset de Cloudinary
-
-    const imageResponse = await fetch(
-      'https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload',
-      {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const token = localStorage.getItem('token'); // Obtener el token almacenado
+      if (!token) throw new Error('No autorizado. Por favor, inicia sesión nuevamente.');
+  
+      // Subir la imagen a Cloudinary (como ya lo haces)
+      const imageData = new FormData();
+      imageData.append('file', imageFile);
+      imageData.append('upload_preset', 'default-preset');
+  
+      const imageResponse = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
         method: 'POST',
         body: imageData,
+      });
+  
+      if (!imageResponse.ok) throw new Error('Error al subir la imagen');
+      const imageResult = await imageResponse.json();
+      const imageUrl = imageResult.secure_url;
+  
+      // Subir los datos de la mascota al backend
+      const petData = { ...formData, image: imageUrl };
+      const response = await fetch('/api/pets/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
+        },
+        body: JSON.stringify(petData),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al registrar la mascota');
       }
-    );
-
-    if (!imageResponse.ok) {
-      throw new Error('Error al subir la imagen');
+  
+      const data = await response.json();
+      console.log('Mascota registrada con éxito:', data);
+      setSuccess(true);
+      // Resetear formulario
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Error al conectar con el servidor');
     }
-
-    const imageResult = await imageResponse.json();
-    const imageUrl = imageResult.secure_url;
-
-    // Obtener el ID del usuario desde localStorage o sessionStorage
-    const ownerId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
-    if (!ownerId) {
-      throw new Error('No se pudo identificar al usuario. Inicia sesión nuevamente.');
-    }
-
-    // Subir datos de la mascota al backend
-    const petData = {
-      name,
-      type,
-      classification,
-      breed,
-      size,
-      age,
-      diet,
-      food,
-      description,
-      price,
-      image: imageUrl,
-      ownerId, // Agregar automáticamente el ID del usuario
-    };
-
-    const response = await fetch('/api/pets/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(petData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al registrar la mascota');
-    }
-
-    const data = await response.json();
-    console.log('Mascota registrada con éxito:', data);
-
-    setSuccess(true);
-    setFormData({
-      name: '',
-      type: '',
-      classification: '',
-      breed: '',
-      size: '',
-      age: '',
-      diet: '',
-      food: '',
-      description: '',
-      price: '',
-    });
-    setImageFile(null);
-    setVaccinationFile(null);
-    setLicenseFile(null);
-    setImagePreview('');
-  } catch (err) {
-    console.error(err);
-    setError(err.message || 'Error al conectar con el servidor');
-    setSuccess(false);
-  }
-};
+  };
 
 
   
