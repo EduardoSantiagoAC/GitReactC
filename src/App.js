@@ -73,7 +73,8 @@ function App() {
           <Route path="/" element={<Home pets={pets} />} />
 
           {/* Detalles de mascota */}
-          <Route path="/pets/:id" element={<PetDetails />} />
+          <Route path="/pet/:id" element={<PetDetails />} />
+
 
           {/* Agregar mascota */}
           <Route
