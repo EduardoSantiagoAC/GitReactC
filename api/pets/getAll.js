@@ -15,28 +15,26 @@ const handler = async (req, res) => {
     // Conectar a la base de datos
     await connectToDatabase();
 
-    // Verificar el token JWT enviado en los encabezados
+    // Verificar si se envió un token en los encabezados
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ message: 'Token no proporcionado. Usuario no autenticado.' });
+    let decoded = null;
+    if (token) {
+      try {
+        decoded = jwt.verify(token, JWT_SECRET);
+      } catch (error) {
+        console.warn('Token inválido o expirado. Continuando sin autenticación.');
+      }
     }
 
-    let decoded;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET);
-    } catch (error) {
-      return res.status(401).json({ message: 'Token inválido o expirado. Por favor, inicia sesión nuevamente.' });
+    let pets;
+    if (decoded && decoded.userId) {
+      // Si se proporciona un token válido, filtrar las mascotas por usuario
+      const userId = decoded.userId;
+      pets = await Pet.find({ userId });
+    } else {
+      // Si no hay token o no es válido, devolver todas las mascotas
+      pets = await Pet.find();
     }
-
-    // Extraer el userId del token decodificado
-    const userId = decoded.userId;
-
-    if (!userId) {
-      return res.status(401).json({ message: 'Usuario no autenticado.' });
-    }
-
-    // Obtener todas las mascotas, con una opción para filtrar por usuario
-    const pets = await Pet.find({ userId });
 
     // Responder con los datos de las mascotas
     res.status(200).json({ pets });
