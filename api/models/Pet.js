@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const PetSchema = new mongoose.Schema({
+const petSchema = new mongoose.Schema({
   name: { type: String, required: true },
   type: { type: String, required: true },
   classification: { type: String, required: true },
