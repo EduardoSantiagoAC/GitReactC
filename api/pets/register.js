@@ -21,7 +21,7 @@ function runMiddleware(req, res, fn) {
 }
 
 // Clave secreta para JWT (asegúrate de almacenarla en variables de entorno)
-const JWT_SECRET = process.env.JWT_SECRET || 'tuClaveSecreta';
+const JWT_SECRET = process.env.JWT_SECRET || 'Unlock255';
 
 export default async function handler(req, res) {
   try {

@@ -3,7 +3,7 @@ import Pet from '../models/Pet'; // Ajusta la ruta si es necesario
 import jwt from 'jsonwebtoken'; // Para verificar el token JWT
 
 // Clave secreta para JWT (asegúrate de almacenarla en variables de entorno)
-const JWT_SECRET = process.env.JWT_SECRET || 'tuClaveSecreta';
+const JWT_SECRET = process.env.JWT_SECRET || 'Unlock255';
 
 const handler = async (req, res) => {
   try {
