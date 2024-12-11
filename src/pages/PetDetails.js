@@ -15,7 +15,7 @@ const PetDetails = () => {
         const response = await fetch(`/api/pets/${id}`);
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'No se pudieron cargar los detalles de la mascota');
+          throw new Error(errorData.message || 'Error al cargar los detalles de la mascota');
         }
         const data = await response.json();
         setPet(data.pet);
@@ -44,7 +44,7 @@ const PetDetails = () => {
     );
   }
 
-  if (error || !pet) {
+  if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E7D3BF] via-[#D5ACC5] to-[#B4789D]">
         <motion.p
@@ -53,7 +53,22 @@ const PetDetails = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          {error || 'No se encontraron detalles para esta mascota.'}
+          {error}
+        </motion.p>
+      </div>
+    );
+  }
+
+  if (!pet) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E7D3BF] via-[#D5ACC5] to-[#B4789D]">
+        <motion.p
+          className="text-center text-[#B4789D] text-xl font-bold"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          No se encontraron detalles para esta mascota.
         </motion.p>
       </div>
     );
@@ -94,21 +109,6 @@ const PetDetails = () => {
           <p className="text-black">
             <strong>Precio:</strong> ${pet.price} por día
           </p>
-          <p className="text-black">
-            <strong>Raza:</strong> {pet.breed}
-          </p>
-          <p className="text-black">
-            <strong>Edad:</strong> {pet.age} años
-          </p>
-          <p className="text-black">
-            <strong>Tamaño:</strong> {pet.size}
-          </p>
-          <p className="text-black">
-            <strong>Dieta:</strong> {pet.diet}
-          </p>
-          <p className="text-black">
-            <strong>Comida Favorita:</strong> {pet.food}
-          </p>
         </motion.div>
 
         {/* Galería de Imágenes */}
@@ -131,21 +131,6 @@ const PetDetails = () => {
               />
             ))}
           </div>
-        </motion.div>
-
-        {/* Botón Volver */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <button
-            className="px-6 py-3 bg-[#B4789D] text-white rounded-full hover:bg-[#C6A89C] transition-all"
-            onClick={() => window.history.back()}
-          >
-            Volver
-          </button>
         </motion.div>
       </div>
 
