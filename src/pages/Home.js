@@ -51,7 +51,7 @@ const Home = () => {
   });
 
   const handlePetClick = (id) => {
-    navigate(`/pet/${id}`);
+    navigate(`/pets/${id}`);
   };
 
   return (
