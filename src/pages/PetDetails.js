@@ -12,7 +12,7 @@ const PetDetails = () => {
   useEffect(() => {
     const fetchPetDetails = async () => {
       try {
-        const response = await fetch(`/api/pet/${id}`);
+        const response = await fetch(`/api/pets/${id}`);
         
         if (!response.ok) {
           const errorData = await response.json();
