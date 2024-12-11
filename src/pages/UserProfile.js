@@ -14,15 +14,16 @@ const UserProfile = ({ user }) => {
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
           console.error('No se encontró el token de autenticación. Inicia sesión nuevamente.');
+          setError('No se encontró el token de autenticación. Inicia sesión nuevamente.');
           return;
         }
 
-        const response = await fetch('/api/pets/getAll', {
+        const response = await fetch('/api/pets/getUserPets', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response.ok) {
@@ -39,10 +40,8 @@ const UserProfile = ({ user }) => {
       }
     };
 
-    if (user?.id) {
-      fetchUserPets();
-    }
-  }, [user]);
+    fetchUserPets();
+  }, []);
 
   const handleEditPet = (pet) => {
     setEditingPet(pet);
@@ -50,7 +49,7 @@ const UserProfile = ({ user }) => {
 
   const handleSavePet = () => {
     setPets((prevPets) =>
-      prevPets.map((pet) => (pet.id === editingPet.id ? editingPet : pet))
+      prevPets.map((pet) => (pet._id === editingPet._id ? editingPet : pet))
     );
     setEditingPet(null);
   };
