@@ -13,13 +13,21 @@ const PetDetails = () => {
     const fetchPetDetails = async () => {
       try {
         const response = await fetch(`/api/pets/${id}`);
+        
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Error al cargar los detalles de la mascota');
         }
+
         const data = await response.json();
+        
+        if (!data.pet) {
+          throw new Error('No se encontraron detalles para esta mascota.');
+        }
+
         setPet(data.pet);
       } catch (err) {
+        console.error('Error al cargar los detalles de la mascota:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -74,7 +82,7 @@ const PetDetails = () => {
     );
   }
 
-  const galleryImages = [pet.image, ...(pet.additionalImages || [])];
+  const galleryImages = pet && pet.image ? [pet.image, ...(pet.additionalImages || [])] : [];
 
   return (
     <div className="min-h-screen bg-[#E7D3BF]">
@@ -109,6 +117,21 @@ const PetDetails = () => {
           <p className="text-black">
             <strong>Precio:</strong> ${pet.price} por día
           </p>
+          <p className="text-black">
+            <strong>Raza:</strong> {pet.breed}
+          </p>
+          <p className="text-black">
+            <strong>Edad:</strong> {pet.age} años
+          </p>
+          <p className="text-black">
+            <strong>Tamaño:</strong> {pet.size}
+          </p>
+          <p className="text-black">
+            <strong>Dieta:</strong> {pet.diet}
+          </p>
+          <p className="text-black">
+            <strong>Comida Favorita:</strong> {pet.food}
+          </p>
         </motion.div>
 
         {/* Galería de Imágenes */}
@@ -131,6 +154,21 @@ const PetDetails = () => {
               />
             ))}
           </div>
+        </motion.div>
+
+        {/* Botón Volver */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          <button
+            className="px-6 py-3 bg-[#B4789D] text-white rounded-full hover:bg-[#C6A89C] transition-all"
+            onClick={() => window.history.back()}
+          >
+            Volver
+          </button>
         </motion.div>
       </div>
 
