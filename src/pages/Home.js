@@ -2,23 +2,42 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+
 const categories = [
   { id: 1, name: 'Todos', icon: '🐾' },
   { id: 2, name: 'Perro', icon: '🐶' },
   { id: 3, name: 'Gato', icon: '🐱' },
   { id: 4, name: 'Terapia', icon: '❤️‍🩹' },
   { id: 5, name: 'Compañía', icon: '🤝' },
+  { id: 6, name: 'caballo', icon: '🐴' },
+  { id: 7, name: 'conejo', icon: '🐰' },
+  { id: 8, name: 'pato', icon: '🦆' },
+  { id: 9, name: 'oveja', icon: '🐑' },
+  { id: 10, name: 'tortuga', icon: '🐢' },
+  { id: 11, name: 'roedor', icon: '🐭' },
+  { id: 12, name: 'serpiente', icon: '🐍' },
 ];
+
+
 
 const pets = [
   {
-    id: 1,
-    name: 'Biscuit',  
-    type: 'Perro',
-    classification: 'Compañía',
+    id: '1',
+    name: 'Biscuit',
+    breed: 'Golden Retriever',
+    age: 3,
+    owner: 'Juan Pérez',
+    image: '', 
+    description: 'Golden Retriever amigable y juguetón, ideal para compañía.',
     price: 350,
-    image: 'https://th.bing.com/th/id/R.d680672d9d7a7b4d3da8c02e38dcfdc8?rik=7o1%2bYH1%2famZcLw&pid=ImgRaw&r=0',
-    description: 'Golden Retriever amigable y juguetón.',
+    ubicacion: { latitud: 23.652694, longitud: -100.643054 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki2.PNG?raw=true',
+      '',
+    ],
   },
   {
     id: 2,
@@ -101,7 +120,144 @@ const pets = [
     image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/chihuahua.PNG?raw=true',
     description: 'Chihuahua tranquilo curioso.',
   },
+  {
+    id: 11,
+    name: 'Pegazo',
+    type: 'Caballo',
+    classification: 'Compañía',
+    price: 1000,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo.PNG?raw=true',
+    description: 'Caballo fuerte y dócil, ideal para paseos.',
+    rating: 4.7,
+    owner: 'Juan Pérez',
+    ubicacion: { latitud: 23.646700, longitud: -100.650000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegaazo3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo4.PNG?raw=true'
+    ],
+  },
+  {
+    id: 12,
+    name: 'Spirit',
+    type: 'Caballo',
+    classification: 'Terapia',
+    price: 1200,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit.PNG?raw=true',
+    description: 'Caballo terapéutico con gran sensibilidad emocional.',
+    rating: 4.9,
+    owner: 'Carlos Méndez',
+    ubicacion: { latitud: 23.648500, longitud: -100.655000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit4.PNG?raw=true'
+    ],
+  },
+  {
+    id: 13,
+    name: 'Gridi',
+    type: 'Conejo',
+    classification: 'Compañía',
+    price: 80,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi.PNG?raw=true',
+    description: 'Conejo esponjoso y juguetón.',
+    rating: 4.6,
+    owner: 'Ana Pérez',
+    ubicacion: { latitud: 23.650200, longitud: -100.642000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi4.PNG?raw=true'
+    ],
+  },
+  {
+    id: 14,
+    name: 'Pelusa',
+    type: 'Conejo',
+    classification: 'Compañía',
+    price: 90,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa.PNG?raw=true',
+    description: 'Conejo suave y cariñoso.',
+    rating: 4.8,
+    owner: 'Laura Gómez',
+    ubicacion: { latitud: 23.645100, longitud: -100.640000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa3.PNG?raw=true'
+    ],
+  },
+  {
+    id: 15,
+    name: 'Frederick',
+    type: 'Iguana',
+    classification: 'Compañía',
+    price: 150,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick.PNG?raw=true',
+    description: 'Iguana tranquila y fácil de cuidar.',
+    rating: 4.9,
+    owner: 'Roberto Fernández',
+    ubicacion: { latitud: 23.653800, longitud: -100.646000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick4.PNG?raw=true'
+    ],
+  },
+  {
+    id: 16,
+    name: 'Billy',
+    type: 'Serpiente',
+    classification: 'Terapia',
+    price: 200,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy.PNG?raw=true',
+    description: 'Serpiente no venenosa de fácil manejo.',
+    rating: 4.4,
+    owner: 'Isabel Ramírez',
+    ubicacion: { latitud: 23.650500, longitud: -100.649000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy4.PNG?raw=true'
+    ],
+  },
+  {
+    id: 18,
+    name: 'Lefty',
+    type: 'Tortuga',
+    classification: 'Compañía',
+    price: 250,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty.PNG?raw=true',
+    description: 'Tortuga marina dócil y tranquila.',
+    rating: 4.7,
+    owner: 'Ana Pérez',
+    ubicacion: { latitud: 23.648742, longitud: -100.642368 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty4.PNG?raw=true'
+    ]
+  },
+  {
+    id: 19,
+    name: 'Rafael',
+    type: 'Tortuga',
+    classification: 'Compañía',
+    price: 280,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael.PNG?raw=true',
+    description: 'Tortuga de tierra activa y curiosa.',
+    rating: 4.9,
+    owner: 'Laura Gómez',
+    ubicacion: { latitud: 23.650124, longitud: -100.648904 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael4.PNG?raw=true'
+    ]
+  }
 ];
+
+
 
 const caregivers = [
   {
@@ -194,25 +350,144 @@ const caregivers = [
     gender: 'Femenino',
     image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/Expertos/Ver%C3%B3nica%20S%C3%A1nchez.PNG?raw=true',
     description: 'Cuidadora de perros y gatos, con enfoque en animales con necesidades especiales.',
+ 
+
+    
   },
 ];
 
 
-const Home = () => {
+
+const getPetLocation = (id) => {
+  const pet = pets.find((pet) => pet.id === id);
+  return pet ? pet.ubicacion : null;
+};
+
+const Home = ({ pets }) => {
   const navigate = useNavigate();
+  
   const [activeCategory, setActiveCategory] = useState('Todos');
+  const [selectedPet, setSelectedPet] = useState(null);
+  const [showMap, setShowMap] = useState(false);
   const [search, setSearch] = useState('');
   const [caregiverFilters, setCaregiverFilters] = useState({
+
+
+    
     gender: 'Todos',
     rating: 'Todos',
     experience: 'Todos',
   });
 
+  
+
+  
+  const getPetLocation = (id) => {
+    const pet = pets.find((pet) => pet.id === id);
+    return pet ? pet.ubicacion : null;
+  };
+
   const [currentSection, setCurrentSection] = useState('mascotas'); // 'mascotas' o 'cuidadores'
 
-  const handleCategoryChange = (category) => {
-    setActiveCategory(category);
-  };
+  const handleCategoryChange = (category) => {  setActiveCategory(category);
+  
+
+
+    
+
+  const handleCategoryChange = (category) => setActiveCategory(category);
+
+
+
+
+  const filteredPets = pets.filter((pet) => {
+    const matchesCategory = activeCategory === 'Todos' || pet.type === activeCategory;
+    const matchesSearch =
+      search === '' ||
+      pet.name.toLowerCase().includes(search.toLowerCase()) ||
+      pet.description.toLowerCase().includes(search.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#E7D3BF] via-[#D5ACC5] to-[#B4789D] pt-24">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="categories">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => handleCategoryChange(category.name)}
+              className={activeCategory === category.name ? 'active' : ''}
+            >
+              {category.icon} {category.name}
+            </button>
+          ))}
+        </div>
+
+
+
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          {filteredPets.map((pet) => (
+            <motion.div
+              key={pet.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all cursor-pointer border border-[#C6A89C]"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="p-4 text-center">
+                <h2 className="text-xl font-semibold text-black">{pet.name}</h2>
+                <p className="text-black text-sm">{pet.description}</p>
+                <p className="text-[#C6A89C]">Precio: ${pet.price}/día</p>
+
+                {/* Nuevo botón para mostrar el mapa */}
+                <button
+                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                  onClick={() => setSelectedPet(selectedPet && selectedPet.id === pet.id ? null : pet)}
+                >
+                  {selectedPet && selectedPet.id === pet.id ? 'Ocultar mapa' : 'Ver ubicación'}
+                </button>
+                {/* Fin del botón */}
+
+                {selectedPet && selectedPet.id === pet.id && (
+                  
+                  <div className="mt-4">
+                    <MapContainer
+                      center={[selectedPet.ubicacion.latitud, selectedPet.ubicacion.longitud]}
+                      zoom={15}
+                      style={{ height: '400px', width: '100%' }}
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[selectedPet.ubicacion.latitud, selectedPet.ubicacion.longitud]}>
+                        <Popup>
+                          {selectedPet.name}: {selectedPet.description}
+                        </Popup>
+                      </Marker>
+                    </MapContainer>
+                  </div>
+
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+  
+
+
+
+  
+
 
   const handleCaregiverFilterChange = (e) => {
     setCaregiverFilters({
@@ -349,6 +624,26 @@ const Home = () => {
                     <p className="text-black text-sm">{pet.description}</p>
                     <div className="mt-2">
                       <p className="text-[#C6A89C]">Precio: ${pet.price}/día</p>
+
+                    {/* NUEVO BOTÓN PARA VER UBICACIÓN */}
+                    <button 
+                      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                      onClick={() => {
+                        const ubicacion = getPetLocation(pet.id);
+                        if (ubicacion) {
+                          alert(`Ubicación de ${pet.name}: Latitud ${ubicacion.latitud}, Longitud ${ubicacion.longitud}`);
+                        } else {
+                          alert('No se encontró la ubicación de esta mascota.');
+                        }
+                      }}
+                    >
+                      Ver ubicación
+                    </button>
+                    {/* FIN DEL BOTÓN DE UBICACIÓN */}                    
+
+
+
+                    
                     </div>
                   </div>
                 </motion.div>
@@ -356,6 +651,8 @@ const Home = () => {
             </motion.div>
           </>
         )}
+
+        
 
         {currentSection === 'cuidadores' && (
           <>
@@ -431,5 +728,7 @@ const Home = () => {
     </div>
   );
 };
+
+
 
 export default Home;

@@ -2,56 +2,195 @@ import React, { useState } from 'react';
 
 const pets = [
   {
-    id: 1,
-    name: 'Buddy',
-    type: 'Perro',
+    id: 18,
+    name: 'Lefty',
+    type: 'Tortuga',
+    classification: 'Compañía',
+    price: 250,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty.PNG?raw=true',
+    description: 'Tortuga marina dócil y tranquila.',
+    rating: 4.7,
+    owner: 'Ana Pérez',
+    ubicacion: { latitud: 23.648742, longitud: -100.642368 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty4.PNG?raw=true'
+    ]
+  },
+  {
+    id: 19,
+    name: 'Rafael',
+    type: 'Tortuga',
+    classification: 'Compañía',
+    price: 280,
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael.PNG?raw=true',
+    description: 'Tortuga de tierra activa y curiosa.',
+    rating: 4.9,
+    owner: 'Laura Gómez',
+    ubicacion: { latitud: 23.650124, longitud: -100.648904 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael4.PNG?raw=true'
+    ]
+  },
+
+  {
+    id: '1',
+    name: 'Kiki',
+    type: 'Gato',
+    age: 2,
+    owner: 'Juan Pérez',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki.PNG?raw=true',
+    description: 'Gato amistoso y enérgico.',
+    price: 300,
+    classification: 'Compañía',
+    size: 'Mediano',
+    rating: 4.8,
+    ubicacion: { latitud: 23.652694, longitud: -100.643054 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki4.PNG?raw=true'
+    ]
+  },
+  {
+    id: '2',
+    name: 'Snowy',
+    type: 'Gato',
+    age: 3,
+    owner: 'Ana López',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/snowy.PNG?raw=true',
+    description: 'Gato cariñoso y elegante.',
+    price: 350,
+    classification: 'Compañía',
+    size: 'Mediano',
+    rating: 4.7,
+    ubicacion: { latitud: 23.653812, longitud: -100.645120 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/snowy2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/snowy3.PNG?raw=true'
+    ]
+  },
+  {
+    id: '3',
+    name: 'Lefty',
+    type: 'Tortuga',
+    age: 10,
+    owner: 'Carlos Díaz',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty.PNG?raw=true',
+    description: 'Tortuga marina dócil y tranquila.',
+    price: 200,
+    classification: 'Compañía',
+    size: 'Pequeño',
+    rating: 4.8,
+    ubicacion: { latitud: 23.651479, longitud: -100.647812 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty4.PNG?raw=true'
+    ]
+  },
+
+  
+  {
+    id: '4',
+    name: 'Rafael',
+    type: 'Tortuga',
+    age: 8,
+    owner: 'María González',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael.PNG?raw=true',
+    description: 'Tortuga curiosa y tranquila.',
+    price: 180,
+    classification: 'Compañía',
+    size: 'Mediano',
+    rating: 4.6,
+    ubicacion: { latitud: 23.645978, longitud: -100.647234 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael4.PNG?raw=true'
+    ]
+  },
+  {
+    id: '5',
+    name: 'Dali',
+    type: 'Rata',
+    age: 1,
+    owner: 'Luis Pérez',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali.PNG?raw=true',
+    description: 'Rata amistosa y juguetona.',
+    price: 50,
+    classification: 'Compañía',
+    size: 'Pequeño',
+    rating: 4.7,
+    ubicacion: { latitud: 23.644782, longitud: -100.646531 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali4.PNG?raw=true'
+    ]
+  },
+  {
+    id: '6',
+    name: 'Tom',
+    type: 'Rata',
+    age: 2,
+    owner: 'Ana Ruiz',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/tom.PNG?raw=true',
+    description: 'Rata divertida y curiosa.',
+    price: 60,
+    classification: 'Compañía',
+    size: 'Pequeño',
+    rating: 4.8,
+    ubicacion: { latitud: 23.648742, longitud: -100.642368 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/tom2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/tom3.PNG?raw=true'
+    ]
+  },
+  {
+    id: '7',
+    name: 'Pegazo',
+    type: 'Caballo',
+    age: 5,
+    owner: 'Juan Pérez',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo.PNG?raw=true',
+    description: 'Caballo fuerte y dócil, ideal para paseos.',
+    price: 1000,
     classification: 'Compañía',
     size: 'Grande',
-    price: 20,
-    description: 'Golden Retriever amigable y juguetón.',
-    image: 'https://placekitten.com/300/200',
+    rating: 4.9,
+    ubicacion: { latitud: 23.646700, longitud: -100.650000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegaazo3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo4.PNG?raw=true'
+    ]
   },
   {
-    id: 2,
-    name: 'Whiskers',
-    type: 'Gato',
-    classification: 'Terapia',
-    size: 'Mediano',
-    price: 10,
-    description: 'Gato juguetón y curioso.',
-    image: 'https://placekitten.com/301/201',
-  },
-  {
-    id: 3,
-    name: 'Rocky',
-    type: 'Perro',
-    classification: 'Apoyo',
-    size: 'Mediano',
-    price: 12,
-    description: 'Bulldog francés muy sociable.',
-    image: 'https://placekitten.com/302/202',
-  },
-  {
-    id: 4,
-    name: 'Coco',
-    type: 'Gato',
-    classification: 'Compañía',
-    size: 'Grande',
-    price: 20,
-    description: 'Gato persa con mucho estilo.',
-    image: 'https://placekitten.com/303/203',
-  },
-  {
-    id: 5,
-    name: 'Max',
-    type: 'Perro',
+    id: '8',
+    name: 'Spirit',
+    type: 'Caballo',
+    age: 6,
+    owner: 'Carlos Méndez',
+    image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit.PNG?raw=true',
+    description: 'Caballo sensible, ideal para terapia emocional.',
+    price: 1200,
     classification: 'Terapia',
     size: 'Grande',
-    price: 18,
-    description: 'Labrador entrenado para terapia emocional.',
-    image: 'https://placekitten.com/304/204',
-  },
+    rating: 4.9,
+    ubicacion: { latitud: 23.648500, longitud: -100.655000 },
+    gallery: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit4.PNG?raw=true'
+    ]
+ 
+  }
 ];
+
 
 const filterOptions = {
   type: ['Todos', 'Perro', 'Gato'],
