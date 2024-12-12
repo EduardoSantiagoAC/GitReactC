@@ -6,10 +6,9 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   userType: { type: String, required: true },
-  profilePhoto: { type: String },
-  token: { type: String }, // Nuevo campo para almacenar el token JWT
+  profilePhoto: { type: String },  // Esto podría ser un URL de la foto subida
 });
 
-export default mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-
+export default User;
