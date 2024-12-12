@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+
 
 const reviews = [
   {
@@ -73,12 +76,72 @@ const reviews = [
     rating: 4,
     comment: 'Snowy es un Chihuahua tranquilo, pero a veces muy curioso. Ideal para personas con poco espacio.',
   },
-];
+
+  {
+    id: 10,
+    user: 'Roberto García',
+    petId: 10, 
+    rating: 4,
+    comment: 'Snowy es un Chihuahua tranquilo, pero a veces muy curioso. Ideal para personas con poco espacio.',
+  },
+  {
+    id: 11,
+    user: 'Juan Pérez',
+    petId: 11, 
+    rating: 4.7,
+    comment: 'Pegazo es un caballo magnífico. Muy dócil y fácil de montar. Los paseos fueron increíbles.',
+  },
+  {
+    id: 12,
+    user: 'Carlos Méndez',
+    petId: 12, 
+    rating: 4.9,
+    comment: 'Spirit es un caballo con gran sensibilidad, perfecto para sesiones de terapia emocional.',
+  },
+  {
+    id: 13,
+    user: 'Ana Pérez',
+    petId: 13, 
+    rating: 4.6,
+    comment: 'Gridi es un conejo encantador, muy juguetón y lleno de energía. Mis hijos lo adoran.',
+  },
+  {
+    id: 14,
+    user: 'Laura Gómez',
+    petId: 14, 
+    rating: 4.8,
+    comment: 'Pelusa es un conejo increíblemente suave y cariñoso. ¡Es la mascota ideal para mis hijos!',
+  },
+  {
+    id: 15,
+    user: 'Roberto Fernández',
+    petId: 15, 
+    rating: 4.9,
+    comment: 'Frederick es una iguana súper tranquila y fácil de cuidar. Su color es fascinante.',
+  },
+  {
+    id: 16,
+    user: 'Isabel Ramírez',
+    petId: 16, 
+    rating: 4.4,
+    comment: 'Billy es una serpiente fascinante. Es tranquila y fácil de manejar, perfecta para principiantes.',
+  },
+  {
+    id: 17,
+    user: 'Javier Torres',
+    petId: 17, 
+    rating: 4.6,
+    comment: 'Snowy es un gato blanco precioso y muy cariñoso. ¡Nos llena de amor todos los días!',
+  }
+];  
+
 
 
 const PetDetails = ({ pets }) => {
   const { id } = useParams();
   const [expandedImage, setExpandedImage] = useState(null);
+  const [showMap, setShowMap] = useState(false);
+
   const pet = pets.find((p) => p.id.toString() === id);
 
   if (!pet) {
@@ -96,6 +159,13 @@ const PetDetails = ({ pets }) => {
     );
   }
 
+  const owner = {
+    name: 'Carlos Méndez',
+    contact: 'carlos@email.com',
+    experience: '5 años cuidando mascotas',
+    profilePic: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/Expertos/Carlos%20M%C3%A9ndez.PNG?raw=true',
+  };
+
   const galleryImages = [
     pet.image,
     'https://via.placeholder.com/150',
@@ -104,142 +174,108 @@ const PetDetails = ({ pets }) => {
     'https://via.placeholder.com/300',
   ];
 
-  const owner = {
-    name: 'Carlos Méndez',
-    contact: 'carlos@email.com',
-    experience: '5 años cuidando mascotas',
-    profilePic:
-      'https://via.placeholder.com/150?text=Perfil+Carlos',
-  };
-
-
-  
   return (
     <div className="min-h-screen bg-[#E7D3BF]">
-      {/* Imagen Principal */}
-      <motion.div
-        className="relative h-96"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+      <h1 className="text-3xl font-bold text-center">{pet.name}</h1>
+
+
+
+      {/* Imagen principal */}
+      <img src={pet.image} alt={pet.name} className="w-full h-64 object-cover rounded-md my-4" />
+      <p className="text-lg">{pet.description}</p>
+      <p className="text-lg"><strong>Precio:</strong> ${pet.price} por día</p>
+
+
+
+      {/* Botón para mostrar la ubicación */}
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+        onClick={() => setShowMap(!showMap)}
       >
-        <img
-          src={galleryImages[0]}
-          alt={pet.name}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute bottom-0 left-0 bg-gradient-to-t from-black via-transparent to-transparent text-white p-6">
-          <h1 className="text-4xl font-bold">{pet.name}</h1>
-          <p className="text-lg">{pet.type}</p>
+        {showMap ? 'Ocultar Mapa' : 'Ver Ubicación'}
+      </button>
+
+      {showMap && pet.ubicacion && (
+        <div className="mt-6">
+          <MapContainer
+            center={[pet.ubicacion.latitud, pet.ubicacion.longitud]}
+            zoom={15}
+            style={{ height: '300px', width: '100%' }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <Marker position={[pet.ubicacion.latitud, pet.ubicacion.longitud]}>
+              <Popup>
+                {pet.name}: {pet.description}
+              </Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+      )}
+
+      
+
+      {/* Información del cuidador */}
+      <div className="bg-[#FFF3E0] p-6 rounded-lg shadow-md mt-8">
+        <h3 className="text-xl font-semibold mb-4 text-black">Información del Cuidador</h3>
+        <div className="flex items-center gap-4">
+          <img
+            src={owner.profilePic}
+            alt="Perfil del cuidador"
+            className="w-16 h-16 rounded-full shadow-md"
+          />
+          <div>
+            <p><strong>Nombre:</strong> {owner.name}</p>
+            <p><strong>Contacto:</strong> {owner.contact}</p>
+            <p><strong>Experiencia:</strong> {owner.experience}</p>
+          </div>
+        </div>
+      </div>
+
+      
+
+      {/* Sección de reseñas */}
+      <motion.div
+        className="bg-[#F3E5F5] p-6 rounded-lg shadow-md mt-8"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <h3 className="text-xl font-semibold mb-4 text-black">Reseñas</h3>
+        {reviews.filter((review) => review.petId.toString() === id).map((review) => (
+          <div key={review.id} className="border-b-2 border-[#D5ACC5] py-2">
+            <p>
+              <strong>{review.user}:</strong> {review.comment}
+            </p>
+            <p>⭐ {review.rating} / 5</p>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* Galería de imágenes */}
+      <motion.div
+        className="bg-[#D5ACC5] p-6 rounded-lg shadow-md mt-8"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <h3 className="text-xl font-semibold mb-4 text-black">Galería</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {galleryImages.map((img, index) => (
+            <motion.img
+              key={index}
+              src={img}
+              alt={`Galería ${index}`}
+              className="w-full h-32 object-cover rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow border-2 border-[#C6A89C]"
+              onClick={() => setExpandedImage(img)}
+              whileHover={{ scale: 1.05 }}
+            />
+          ))}
         </div>
       </motion.div>
 
-      {/* Contenido */}
-      <div className="max-w-6xl mx-auto p-6 space-y-8">
-        {/* Información del Perrito */}
-        <motion.div
-          className="bg-[#D5ACC5] p-6 rounded-lg shadow-md"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-2xl font-semibold mb-4 text-black">Detalles de {pet.name}</h2>
-          <p className="text-black mb-4">{pet.description}</p>
-          <p className="text-black">
-            <strong>Clasificación:</strong> {pet.classification}
-          </p>
-          <p className="text-black">
-            <strong>Precio:</strong> ${pet.price} por día
-          </p>
-        </motion.div>
 
-        {/* Información del Dueño */}
-        <motion.div
-          className="bg-[#E7D3BF] p-6 rounded-lg shadow-md flex items-center gap-6"
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <img
-            src={owner.profilePic}
-            alt={`Perfil de ${owner.name}`}
-            className="w-24 h-24 rounded-full object-cover shadow-md border-4 border-[#B4789D]"
-          />
-          <div>
-            <h3 className="text-xl font-semibold mb-2 text-black">{owner.name}</h3>
-            <p className="text-black">
-              <strong>Contacto:</strong> {owner.contact}
-            </p>
-            <p className="text-black">
-              <strong>Experiencia:</strong> {owner.experience}
-            </p>
-          </div>
-        </motion.div>
 
-        {/* Galería de Imágenes */}
-        <motion.div
-          className="bg-[#D5ACC5] p-6 rounded-lg shadow-md"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3 className="text-xl font-semibold mb-4 text-black">Galería</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {galleryImages.map((img, index) => (
-              <motion.img
-                key={index}
-                src={img}
-                alt={`Galería ${index}`}
-                className="w-full h-32 object-cover rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-shadow border-2 border-[#C6A89C]"
-                onClick={() => setExpandedImage(img)}
-                whileHover={{ scale: 1.05 }}
-              />
-            ))}
-          </div>
-        </motion.div>
 
-        {/* Reseñas */}
-        <motion.div
-          className="bg-[#C6A89C] p-6 rounded-lg shadow-md"
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h3 className="text-xl font-semibold mb-4 text-black">Reseñas</h3>
-          {reviews.map((review) => (
-            <div
-              key={review.id}
-              className="mb-4 p-4 bg-[#E7D3BF] rounded-lg shadow-sm"
-            >
-              <div className="flex items-center mb-2">
-                <div className="flex-shrink-0 w-10 h-10 bg-[#B4789D] rounded-full"></div>
-                <div className="ml-4">
-                  <h4 className="font-semibold text-black">{review.user}</h4>
-                  <p className="text-[#B4789D]">{`⭐`.repeat(review.rating)}</p>
-                </div>
-              </div>
-              <p className="text-black">{review.comment}</p>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Botón Volver */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <button
-            className="px-6 py-3 bg-[#B4789D] text-white rounded-full hover:bg-[#C6A89C] transition-all"
-            onClick={() => window.history.back()}
-          >
-            Volver
-          </button>
-        </motion.div>
-      </div>
-
-      {/* Modal de imagen expandida */}
       {expandedImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
@@ -253,7 +289,6 @@ const PetDetails = ({ pets }) => {
         </div>
       )}
 
-      {/* Botón de Mensajería */}
       <button
         className="fixed bottom-8 right-8 bg-[#B4789D] text-white p-4 rounded-full shadow-lg hover:bg-[#C6A89C] transition-all"
         onClick={() => alert('Iniciando servicio de mensajería...')}
@@ -265,3 +300,121 @@ const PetDetails = ({ pets }) => {
 };
 
 export default PetDetails;
+
+
+
+/*
+
+const petImages = [
+  {
+    name: 'kiki',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki3.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Pegazo',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegaazo3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Spirit',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Gridi',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Pelusa',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa3.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Frederick',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Billy',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Lefty',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Rafael',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael4.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Dali',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali3.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali4.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali5.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Tom',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/tom.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/tom2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/tom3.PNG?raw=true'
+    ]
+  },
+  {
+    name: 'Snowy',
+    images: [
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/snowy.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/snowy2.PNG?raw=true',
+      'https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/snowy3.PNG?raw=true'
+    ]
+  }
+];
+
+
+*/
+
+
+
