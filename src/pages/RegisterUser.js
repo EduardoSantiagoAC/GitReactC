@@ -29,22 +29,42 @@ const RegisterUser = () => {
   const handleFileChange = (e) => {
     const { name } = e.target;
     const file = e.target.files[0];
-
+  
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        setError('Por favor, selecciona solo imágenes (JPG, PNG, etc.)');
+        return;
+      }
+    }
+  
     if (name === 'profilePhoto' && file) {
       const reader = new FileReader();
       reader.onload = () => setProfilePhotoPreview(reader.result);
       reader.readAsDataURL(file);
     }
-
+  
+    if (name === 'frontDni' && file) {
+      const reader = new FileReader();
+      reader.onload = () => setFrontDniPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  
+    if (name === 'backDni' && file) {
+      const reader = new FileReader();
+      reader.onload = () => setBackDniPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  
     setFormData((prev) => ({
       ...prev,
       [name]: file,
     }));
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (
       !formData.name ||
       !formData.email ||
@@ -57,12 +77,12 @@ const RegisterUser = () => {
       setError('Todos los campos son obligatorios.');
       return;
     }
-
+  
     if (formData.userType === 'Cuidador' && !formData.certificates) {
       setError('Debes subir tus certificados si eres cuidador.');
       return;
     }
-
+  
     const formDataToSend = new FormData();
     formDataToSend.append('name', formData.name);
     formDataToSend.append('email', formData.email);
@@ -72,24 +92,20 @@ const RegisterUser = () => {
     formDataToSend.append('profilePhoto', formData.profilePhoto);
     formDataToSend.append('frontDni', formData.frontDni);
     formDataToSend.append('backDni', formData.backDni);
-    if (formData.selfie) {
-      formDataToSend.append('selfie', formData.selfie);
-    }
-    if (formData.certificates) {
-      formDataToSend.append('certificates', formData.certificates);
-    }
-
+    if (formData.selfie) formDataToSend.append('selfie', formData.selfie);
+    if (formData.certificates) formDataToSend.append('certificates', formData.certificates);
+  
     try {
       const response = await fetch('/api/users/register', {
         method: 'POST',
         body: formDataToSend,
       });
-
+  
       if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json().catch(() => ({ message: 'Error al registrar usuario.' }));
         throw new Error(data.message || 'Error al registrar usuario.');
       }
-
+  
       setSuccess(true);
       setError('');
       setTimeout(() => navigate('/login'), 2000);

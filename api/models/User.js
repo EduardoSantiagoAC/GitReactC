@@ -4,22 +4,13 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  userType: { 
-    type: String, 
-    required: true, 
-    enum: ['Usuario General', 'Cuidador', 'Dueño'], // Limitar a los valores posibles
-  },
-  profilePhoto: { type: String, required: true }, // URL de la foto de perfil
-  country: { type: String, required: true }, // País del usuario
-  frontDni: { type: String, required: true }, // URL de la foto frontal del DNI
-  backDni: { type: String, required: true }, // URL de la foto trasera del DNI
-  certificates: { 
-    type: String, 
-    required: function() {
-      return this.userType === 'Cuidador'; // Certificados solo obligatorios si es Cuidador
-    } 
-  },
-}, { timestamps: true }); // timestamps agrega createdAt y updatedAt automáticamente
+  userType: { type: String, required: true },
+  country: { type: String, required: true },
+  profilePhoto: { type: String, required: true },  // URL de la imagen en Cloudinary
+  frontDni: { type: String, required: true },  // URL de la imagen en Cloudinary
+  backDni: { type: String, required: true },  // URL de la imagen en Cloudinary
+  certificates: { type: String },  // URL de la imagen en Cloudinary (solo para cuidadores)
+});
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 
