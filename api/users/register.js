@@ -25,13 +25,13 @@ function runMiddleware(req, res, fn) {
 // Configuración de multer para manejar archivos
 const storage = multer.memoryStorage();
 const upload = multer({
-  storage: storage,
+  storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // Límite de 5 MB por archivo
 });
 
 export const config = {
   api: {
-    bodyParser: false, // Deshabilitar el analizador de cuerpo para que multer pueda manejarlo
+    bodyParser: false, // Deshabilitar bodyParser para que multer lo maneje
   },
 };
 
@@ -42,11 +42,10 @@ const uploadFilesMiddleware = upload.fields([
   { name: 'certificates', maxCount: 1 },
 ]);
 
-// Función para subir imágenes a Cloudinary
 const uploadToCloudinary = async (fileBuffer) => {
   const formData = new FormData();
   formData.append('file', fileBuffer);
-  formData.append('upload_preset', 'ml_default'); // Cambiar por tu "upload_preset" de Cloudinary
+  formData.append('upload_preset', 'ml_default'); // Cambia por tu preset en Cloudinary
 
   try {
     const response = await fetch(
@@ -59,7 +58,7 @@ const uploadToCloudinary = async (fileBuffer) => {
 
     const data = await response.json();
     if (!response.ok) throw new Error(data.error.message);
-    return data.secure_url; // La URL segura de la imagen subida
+    return data.secure_url;
   } catch (error) {
     console.error('Error al subir a Cloudinary:', error);
     throw new Error('Error al subir las imágenes a Cloudinary');
@@ -76,7 +75,6 @@ export default async function handler(req, res) {
 
     // Validar método HTTP
     if (req.method !== 'POST') {
-      console.log('Método HTTP no permitido');
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
@@ -92,23 +90,35 @@ export default async function handler(req, res) {
       });
     });
 
-    // Extraer datos del cuerpo de la solicitud
+    // Revisar qué datos llegan
+    console.log('Archivos recibidos:', req.files);
+    console.log('Datos del cuerpo:', req.body);
+
+    // Extraer datos
     const { name, email, password, userType, country } = req.body || {};
     const profilePhotoFile = req.files?.profilePhoto?.[0];
     const frontDniFile = req.files?.frontDni?.[0];
     const backDniFile = req.files?.backDni?.[0];
     const certificatesFile = req.files?.certificates?.[0];
 
-    console.log('Archivos recibidos:', req.files);
-    console.log('Datos recibidos:', { name, email, userType, country });
-
     // Validar campos obligatorios
-    if (!name || !email || !password || !userType || !country || !profilePhotoFile || !frontDniFile || !backDniFile) {
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !userType ||
+      !country ||
+      !profilePhotoFile ||
+      !frontDniFile ||
+      !backDniFile
+    ) {
+      console.log('Error: Campos obligatorios faltantes');
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
     // Si el usuario es cuidador, validar que haya subido certificados
     if (userType === 'Cuidador' && !certificatesFile) {
+      console.log('Error: Certificados faltantes para cuidadores');
       return res.status(400).json({ message: 'Los cuidadores deben subir certificados' });
     }
 
