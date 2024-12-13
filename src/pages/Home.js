@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
+import PetCard from "../components/PetCard";
 
 const categories = [
   { id: 1, name: 'Todos', icon: '🐾' },
@@ -9,10 +10,28 @@ const categories = [
   { id: 3, name: 'Gato', icon: '🐱' },
   { id: 4, name: 'Terapia', icon: '❤️‍🩹' },
   { id: 5, name: 'Compañía', icon: '🤝' },
+  { id: 6, name: 'caballo', icon: '🐴' },
+  { id: 7, name: 'conejo', icon: '🐰' },
+  { id: 8, name: 'pato', icon: '🦆' },
+  { id: 9, name: 'oveja', icon: '🐑' },
+  { id: 10, name: 'tortuga', icon: '🐢' },
+  { id: 11, name: 'roedor', icon: '🐭' },
+  { id: 12, name: 'serpiente', icon: '🐍' },
 ];
+
+
 
 const pets = [
   {
+    id: 1,
+    name: 'Biscuit',  
+    type: 'Perro',
+    classification: 'Compañía',
+    price: 350,
+    image: 'https://th.bing.com/th/id/R.d680672d9d7a7b4d3da8c02e38dcfdc8?rik=7o1%2bYH1%2famZcLw&pid=ImgRaw&r=0',
+    description: 'Golden Retriever amigable y juguetón.',
+  },
+    {
     id: 1,
     name: 'Biscuit',  
     type: 'Perro',
@@ -114,6 +133,7 @@ const caregivers = [
     image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/Expertos/Mar%C3%ADa%20Lopez.PNG?raw=true',
     description: 'Especialista en cuidado de gatos y perros grandes.',
   },
+  
   {
     id: 2,
     name: 'Carlos Méndez',
