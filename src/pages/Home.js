@@ -216,16 +216,16 @@ const foods = [
     classification: "Alimento premium",
     description: "Alimento para perros adultos con sabor a pollo y cebada.",
     price: 1350,
-    image: "https://cdn.hills-cdn.com/dam/product-images/hills/pdp/adult-dog-large-chicken-dry-productShot_500.jpg",
+    image: "https://www.petco.com.mx/medias/?context=bWFzdGVyfGltYWdlc3wzNTY4NjZ8aW1hZ2UvanBlZ3xpbWFnZXMvaGZjL2hlNi85NTAxOTQwNDE2NTQyLmpwZ3xkY2Y5ZTA0OGM1NGQzMTBjNzczMjIwNzhkNjk1YTc3M2IwODdmNzcwNDFhNWQwNzFjMGQ0YmYxOTlmMDRkMDQ5",
   },
   {
     id: 3,
-    name: "Whiskas Carne y Pollo",
+    name: "Whiskas Pollo",
     type: "Gato",
     classification: "Alimento regular",
-    description: "Alimento seco para gatos adultos con mezcla de sabores de carne y pollo.",
+    description: "Alimento seco para gatos adultos, pollo.",
     price: 500,
-    image: "https://whiskas.com.mx/wp-content/uploads/2021/05/Whiskas-SaborCarneyPollo-1.png",
+    image: "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00070646002930L.jpg?odnHeight=768&odnWidth=768&odnBg=FFFFFF",
   },
   {
     id: 4,
@@ -234,7 +234,7 @@ const foods = [
     classification: "Dietético",
     description: "Dieta veterinaria para perros con problemas digestivos.",
     price: 1700,
-    image: "https://images.purina.com/pro-plan/en/proplan-vet/us-vet-med/en/files/proplan_veterinary_diets_gastroenteric_formulas_dog_dry_original.jpg",
+    image: "https://purina.com.mx/sites/default/files/styles/webp/public/2022-08/NEUROCARE_FRONT_PRO_PLAN.jpeg.webp?itok=Nxp78Xte",
   },
   {
     id: 5,
@@ -243,7 +243,7 @@ const foods = [
     classification: "Snacks",
     description: "Comida húmeda para gatos, hecha de filetes de pollo en salsa.",
     price: 350,
-    image: "https://cdn.shopify.com/s/files/1/0247/9124/2351/products/fancy-feast-classic-pate.jpg",
+    image: "https://www.petco.com.mx/medias/135829.jpg-1200ftw?context=bWFzdGVyfHJvb3R8NTMxNzQ5fGltYWdlL2pwZWd8aDA4L2hkMS85ODc1ODM0NTY4NzM0LzEzNTgyOS5qcGdfMTIwMGZ0d3wyOGYwZjNlMWVlYjdhOTIwNjI4ZWVkNGNiYjZlZTU3OWExMjEwY2FlM2VkZTkxOGU3Y2IxOWQ2NTg0NGM3NmM4",
   },
   {
     id: 6,
@@ -252,7 +252,7 @@ const foods = [
     classification: "Snacks",
     description: "Snacks para perros que ayudan a mantener dientes limpios y saludables.",
     price: 250,
-    image: "https://www.pedigree.com.mx/wp-content/uploads/2021/05/dentastix-fresh-gigante.jpg",
+    image: "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750617451530L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
   },
   {
     id: 7,
@@ -261,7 +261,7 @@ const foods = [
     classification: "Alimento premium",
     description: "Alimento seco para gatitos hasta los 12 meses de edad.",
     price: 1150,
-    image: "https://cdn.hills-cdn.com/dam/product-images/hills/pdp/kitten-health-dry-original.jpg",
+    image: "https://www.petco.com.mx/medias/1200ftw-113215.jpg?context=bWFzdGVyfHJvb3R8NDM5NzA4fGltYWdlL2pwZWd8aDA4L2hmOC8xMDg3MDU0NTE1NDA3OC8xMjAwZnR3XzExMzIxNS5qcGd8OGZjOTYwZmQ1MDNkOTVmM2ZjYzg4ZjAxY2FlNzIyODc4OTgxMjUxNTMxM2E4YTdhMDQ4ZGU4YjEwY2I2OWEwYg",
   },
   {
     id: 8,
@@ -270,7 +270,7 @@ const foods = [
     classification: "Natural",
     description: "Alimento para perros con ingredientes limitados y salmón como proteína principal.",
     price: 1800,
-    image: "https://canidae.com/media/2008/canidae-dog-pure-salmon-24lb-front-1.jpg",
+    image: "https://www.petco.com.mx/medias/123028.jpg-1200ftw?context=bWFzdGVyfHJvb3R8MjYxMTc1fGltYWdlL2pwZWd8aDI2L2gwYi8xMDM4MzY0MzgzNjQ0Ni8xMjMwMjguanBnXzEyMDBmdHd8OTJjMjQyODRiMTM2MzIzOGYwZGExMTM4ZDhlYTg5MTg5ZWNkOTQ1YzIxZTI0NDIzMjU4OWU1NDFhZmFiODMzYg",
   },
   {
     id: 9,
@@ -279,7 +279,7 @@ const foods = [
     classification: "Snacks",
     description: "Pate para gatos con sabores seleccionados de carne y pescado.",
     price: 400,
-    image: "https://m.media-amazon.com/images/I/71xd9BtDm+L._SL1500_.jpg",
+    image: "https://i5.walmartimages.com.mx/gr/images/product-images/img_large/00750617451307L.jpg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
   },
   {
     id: 10,
@@ -288,7 +288,7 @@ const foods = [
     classification: "Dietético",
     description: "Alimento seco para perros que ayuda a controlar el peso.",
     price: 1900,
-    image: "https://images.hillspet.com/dam/hills/caas/product/proplan/dog-mobility-hills-prescription-diet-joint-care-dry-food-canine-bag-sm.jpg",
+    image: "https://www.petco.com.mx/medias/122361.jpg-1200ftw?context=bWFzdGVyfHJvb3R8MzYyNjUwfGltYWdlL2pwZWd8aGQ5L2hiZC8xMDMwMDk1MzUyNjMwMi8xMjIzNjEuanBnXzEyMDBmdHd8ZThmMjIyNzQ1Y2NiZDA5MDUwYjliOWNlYjAwNmJiYjk3YjA2YTNiMTY1ZjU3ZDJjYTE5NjVlODc2MTYxZDIzZQ",
   },
 ];
 
