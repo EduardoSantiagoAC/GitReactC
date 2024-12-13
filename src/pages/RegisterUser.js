@@ -41,6 +41,11 @@ const RegisterUser = () => {
         setError('Por favor, selecciona solo imágenes (JPG, PNG, etc.)');
         return;
       }
+  
+      if (file.size > 5 * 1024 * 1024) { // Límite de 5 MB
+        setError('El archivo debe ser menor a 5 MB');
+        return;
+      }
     }
   
     if (name === 'profilePhoto' && file) {
@@ -51,13 +56,13 @@ const RegisterUser = () => {
   
     if (name === 'frontDni' && file) {
       const reader = new FileReader();
-      reader.onload = () => setFrontDniPreview(reader.result); // Vista previa de la foto frontal del DNI
+      reader.onload = () => setFrontDniPreview(reader.result);
       reader.readAsDataURL(file);
     }
   
     if (name === 'backDni' && file) {
       const reader = new FileReader();
-      reader.onload = () => setBackDniPreview(reader.result); // Vista previa de la foto trasera del DNI
+      reader.onload = () => setBackDniPreview(reader.result);
       reader.readAsDataURL(file);
     }
   
@@ -66,7 +71,7 @@ const RegisterUser = () => {
       [name]: file,
     }));
   };
-
+  
 
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
@@ -117,11 +122,21 @@ const RegisterUser = () => {
     try {
       // Subir imágenes a Cloudinary antes de enviarlas al backend
       const profilePhotoUrl = await uploadToCloudinary(formData.profilePhoto);
+      if (!profilePhotoUrl) throw new Error('Error al subir la foto de perfil');
+  
       const frontDniUrl = await uploadToCloudinary(formData.frontDni);
+      if (!frontDniUrl) throw new Error('Error al subir la foto frontal del DNI');
+  
       const backDniUrl = await uploadToCloudinary(formData.backDni);
-      const certificatesUrl = formData.certificates
-        ? await uploadToCloudinary(formData.certificates)
+      if (!backDniUrl) throw new Error('Error al subir la foto trasera del DNI');
+  
+      const certificatesUrl = formData.certificates 
+        ? await uploadToCloudinary(formData.certificates) 
         : null;
+  
+      if (formData.userType === 'Cuidador' && !certificatesUrl) {
+        throw new Error('Error al subir los certificados');
+      }
   
       // Crear el objeto de datos con las URLs de las imágenes
       const userData = {
@@ -156,6 +171,7 @@ const RegisterUser = () => {
       setError(error.message);
     }
   };
+  
   
   
   return (
