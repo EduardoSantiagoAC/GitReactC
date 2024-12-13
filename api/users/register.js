@@ -4,6 +4,7 @@ import connectToDatabase from '../config/db';
 import User from '../models/User';
 import cloudinary from 'cloudinary';
 import multer from 'multer';
+import { promisify } from 'util';
 
 // Configuración de CORS
 const cors = Cors({
@@ -26,11 +27,27 @@ function runMiddleware(req, res, fn) {
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
+// Promisificar la función de Cloudinary para que se puedan usar promesas
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+const uploadToCloudinary = (fileBuffer, folder) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    ).end(fileBuffer);
+  });
+};
 
 export default async function handler(req, res) {
   try {
@@ -95,29 +112,13 @@ export default async function handler(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Subir imágenes a Cloudinary
-    const uploadImage = (file, folder) => {
-      return new Promise((resolve, reject) => {
-        cloudinary.v2.uploader.upload_stream(
-          { folder }, 
-          (error, result) => {
-            if (error) {
-              console.error(`Error al subir imagen a Cloudinary en la carpeta ${folder}:`, error);
-              reject(error);
-            } else {
-              resolve(result.secure_url);
-            }
-          }
-        ).end(file.buffer);
-      });
-    };
-
-    const profilePhoto = await uploadImage(profilePhotoFile, 'profile_photos');
-    const frontDni = await uploadImage(frontDniFile, 'dni_photos');
-    const backDni = await uploadImage(backDniFile, 'dni_photos');
+    const profilePhoto = await uploadToCloudinary(profilePhotoFile.buffer, 'profile_photos');
+    const frontDni = await uploadToCloudinary(frontDniFile.buffer, 'dni_photos');
+    const backDni = await uploadToCloudinary(backDniFile.buffer, 'dni_photos');
 
     let certificates = null;
     if (userType === 'Cuidador' && certificatesFile) {
-      certificates = await uploadImage(certificatesFile, 'certificates');
+      certificates = await uploadToCloudinary(certificatesFile.buffer, 'certificates');
     }
 
     // Crear un nuevo usuario
