@@ -207,7 +207,7 @@ const foods = [
     classification: "Alimento premium",
     description: "Alimento seco para cachorros de raza mediana hasta los 12 meses.",
     price: 1200,
-    image: "https://www.petco.com.mx/cdn-cgi/image/width=400,height=400/https://www.petco.com.mx/assets/images/products/2333023.jpg",
+    image: "https://www.petco.com.mx/medias/1200ftw-117287.jpg?context=bWFzdGVyfHJvb3R8NTI4NDg0fGltYWdlL2pwZWd8aGIzL2g5Ni8xMDg3MDU1MjAzNTM1OC8xMjAwZnR3XzExNzI4Ny5qcGd8ZjI0NTllZTNjYzVkZjI0NmNkMjM4Y2I5ZmI5NWIwOGE1NmQzZjQ0MjdjNTY5MGY5MjY3NGM4MzAyMDY5NmI5Mw",
   },
   {
     id: 2,
