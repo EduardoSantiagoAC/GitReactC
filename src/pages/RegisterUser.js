@@ -269,43 +269,27 @@ const RegisterUser = () => {
           </div>
 
           {/* Fotos del DNI */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="frontDni" className="block text-gray-600 font-medium">Foto Frontal del DNI</label>
-            <label htmlFor="frontDni" className="bg-gradient-to-r from-[#B4789D] to-[#EAA9A5] text-white py-2 px-8 rounded-full font-semibold hover:scale-105 transition-transform cursor-pointer text-center inline-block">
-              Seleccionar Archivo
-            </label>
-            <input type="file" name="frontDni" id="frontDni" onChange={handleFileChange} className="hidden" />
-            {frontDniPreview && <img src={frontDniPreview} alt="Foto Frontal del DNI" className="w-32 h-32" />}
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="frontDni" className="block text-gray-600 font-medium">Foto Frontal del DNI</label>
+                <label htmlFor="frontDni" className="bg-gradient-to-r from-[#B4789D] to-[#EAA9A5] text-white py-2 px-8 rounded-full font-semibold hover:scale-105 transition-transform cursor-pointer text-center inline-block">
+                  Seleccionar Archivo
+                </label>
+                <input type="file" name="frontDni" id="frontDni" onChange={handleFileChange} className="hidden" />
+                {frontDniPreview && <img src={frontDniPreview} alt="Foto Frontal del DNI" className="w-32 h-32" />}
+              </div>
 
-          <div>
-            <label htmlFor="backDni" className="block text-gray-600 font-medium">Foto Trasera del DNI</label>
-            <label htmlFor="backDni" className="bg-gradient-to-r from-[#B4789D] to-[#EAA9A5] text-white py-2 px-8 rounded-full font-semibold hover:scale-105 transition-transform cursor-pointer text-center inline-block">
-              Seleccionar Archivo
-            </label>
-            <input type="file" name="backDni" id="backDni" onChange={handleFileChange} className="hidden" />
-            {backDniPreview && <img src={backDniPreview} alt="Foto Trasera del DNI" className="w-32 h-32" />}
-          </div>
-
-            {/* Sección para la Foto Trasera del DNI */}
-            <div className="flex flex-col items-center">
-              <label htmlFor="backDni" className="w-32 h-32 bg-[#FAF3E0] flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-[#B4789D] transition-all">
-                {backDniPreview ? (
-                  <img src={backDniPreview} alt="Foto Trasera del DNI" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-gray-400 font-medium">Subir Foto Trasera</span>
-                )}
-              </label>
-              <input 
-                type="file" 
-                name="backDni" 
-                id="backDni" 
-                onChange={handleFileChange} 
-                className="hidden" 
-              />
+              <div>
+                <label htmlFor="backDni" className="block text-gray-600 font-medium">Foto Trasera del DNI</label>
+                <label htmlFor="backDni" className="bg-gradient-to-r from-[#B4789D] to-[#EAA9A5] text-white py-2 px-8 rounded-full font-semibold hover:scale-105 transition-transform cursor-pointer text-center inline-block">
+                  Seleccionar Archivo
+                </label>
+                <input type="file" name="backDni" id="backDni" onChange={handleFileChange} className="hidden" />
+                {backDniPreview && <img src={backDniPreview} alt="Foto Trasera del DNI" className="w-32 h-32" />}
+              </div>
             </div>
-          </div>
+
+    
 
 
           {/* Certificados */}
