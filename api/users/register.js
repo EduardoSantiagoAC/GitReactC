@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import Cors from 'cors';
 import connectToDatabase from '../config/db';
 import User from '../models/User';
-import cloudinary from '../config/cloudinary';
+import cloudinary from 'cloudinary';
 import multer from 'multer';
 
 // Configuración de CORS
@@ -25,6 +25,12 @@ function runMiddleware(req, res, fn) {
 // Configuración de multer para manejar archivos
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
+
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET 
+});
 
 export default async function handler(req, res) {
   try {
@@ -89,43 +95,29 @@ export default async function handler(req, res) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Subir imágenes a Cloudinary
-    const profilePhoto = await cloudinary.v2.uploader.upload_stream(
-      { folder: 'profile_photos' },
-      (error, result) => {
-        if (error) throw new Error('Error al subir la foto de perfil a Cloudinary');
-        return result.secure_url;
-      }
-    );
-    profilePhotoFile.stream.pipe(profilePhoto);
+    const uploadImage = (file, folder) => {
+      return new Promise((resolve, reject) => {
+        cloudinary.v2.uploader.upload_stream(
+          { folder }, 
+          (error, result) => {
+            if (error) {
+              console.error(`Error al subir imagen a Cloudinary en la carpeta ${folder}:`, error);
+              reject(error);
+            } else {
+              resolve(result.secure_url);
+            }
+          }
+        ).end(file.buffer);
+      });
+    };
 
-    const frontDni = await cloudinary.v2.uploader.upload_stream(
-      { folder: 'dni_photos' },
-      (error, result) => {
-        if (error) throw new Error('Error al subir la foto frontal del DNI a Cloudinary');
-        return result.secure_url;
-      }
-    );
-    frontDniFile.stream.pipe(frontDni);
-
-    const backDni = await cloudinary.v2.uploader.upload_stream(
-      { folder: 'dni_photos' },
-      (error, result) => {
-        if (error) throw new Error('Error al subir la foto trasera del DNI a Cloudinary');
-        return result.secure_url;
-      }
-    );
-    backDniFile.stream.pipe(backDni);
+    const profilePhoto = await uploadImage(profilePhotoFile, 'profile_photos');
+    const frontDni = await uploadImage(frontDniFile, 'dni_photos');
+    const backDni = await uploadImage(backDniFile, 'dni_photos');
 
     let certificates = null;
     if (userType === 'Cuidador' && certificatesFile) {
-      certificates = await cloudinary.v2.uploader.upload_stream(
-        { folder: 'certificates' },
-        (error, result) => {
-          if (error) throw new Error('Error al subir los certificados a Cloudinary');
-          return result.secure_url;
-        }
-      );
-      certificatesFile.stream.pipe(certificates);
+      certificates = await uploadImage(certificatesFile, 'certificates');
     }
 
     // Crear un nuevo usuario
