@@ -96,7 +96,6 @@ const RegisterUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validación de campos obligatorios
     if (
       !formData.name ||
       !formData.email ||
@@ -116,40 +115,24 @@ const RegisterUser = () => {
     }
   
     try {
-      // Subir imágenes a Cloudinary
-      const profilePhotoUrl = await uploadToCloudinary(formData.profilePhoto);
-      if (!profilePhotoUrl) throw new Error('Error al subir la foto de perfil.');
+      // Crear FormData para enviar archivos al backend
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('password', formData.password);
+      formDataToSend.append('userType', formData.userType);
+      formDataToSend.append('country', formData.country);
+      formDataToSend.append('profilePhoto', formData.profilePhoto);
+      formDataToSend.append('frontDni', formData.frontDni);
+      formDataToSend.append('backDni', formData.backDni);
   
-      const frontDniUrl = await uploadToCloudinary(formData.frontDni);
-      if (!frontDniUrl) throw new Error('Error al subir la foto frontal del DNI.');
+      if (formData.certificates) {
+        formDataToSend.append('certificates', formData.certificates);
+      }
   
-      const backDniUrl = await uploadToCloudinary(formData.backDni);
-      if (!backDniUrl) throw new Error('Error al subir la foto trasera del DNI.');
-  
-      const certificatesUrl = formData.certificates
-        ? await uploadToCloudinary(formData.certificates)
-        : null;
-  
-      // Crear objeto de datos del usuario
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        userType: formData.userType,
-        country: formData.country,
-        profilePhoto: profilePhotoUrl,
-        frontDni: frontDniUrl,
-        backDni: backDniUrl,
-        certificates: certificatesUrl,
-      };
-  
-      console.log('Datos enviados al backend:', userData);
-  
-      // Enviar datos al backend
       const response = await fetch('/api/users/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
+        body: formDataToSend,
       });
   
       if (!response.ok) {
@@ -157,7 +140,6 @@ const RegisterUser = () => {
         throw new Error(data.message || 'Error al registrar usuario.');
       }
   
-      // Manejar éxito
       setSuccess(true);
       setError('');
       setTimeout(() => navigate('/login'), 2000);
@@ -166,6 +148,7 @@ const RegisterUser = () => {
       setError(error.message);
     }
   };
+  
   
   
   return (
