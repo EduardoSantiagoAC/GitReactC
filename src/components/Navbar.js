@@ -20,7 +20,7 @@ const Navbar = ({ currentUser }) => {
         >
           <img src={logo} alt="PetShare Logo" className="h-10 mr-3" />
           <span className="text-2xl font-extrabold text-white tracking-tight">
-            PetShare
+            Mundo Mascotas
           </span>
         </Link>
 
