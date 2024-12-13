@@ -3,6 +3,7 @@ import Cors from 'cors';
 import connectToDatabase from '../config/db';
 import User from '../models/User';
 import multer from 'multer';
+import fetch from 'node-fetch';
 
 // Configuración de CORS
 const cors = Cors({
@@ -38,19 +39,23 @@ const uploadFilesMiddleware = upload.fields([
   { name: 'profilePhoto', maxCount: 1 },
   { name: 'frontDni', maxCount: 1 },
   { name: 'backDni', maxCount: 1 },
-  { name: 'certificates', maxCount: 1 }
+  { name: 'certificates', maxCount: 1 },
 ]);
 
+// Función para subir imágenes a Cloudinary
 const uploadToCloudinary = async (fileBuffer) => {
   const formData = new FormData();
   formData.append('file', fileBuffer);
-  formData.append('upload_preset', 'ml_default'); // Cambiar por el "upload_preset" correcto de Cloudinary
+  formData.append('upload_preset', 'ml_default'); // Cambiar por tu "upload_preset" de Cloudinary
 
   try {
-    const response = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await fetch(
+      'https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload',
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
 
     const data = await response.json();
     if (!response.ok) throw new Error(data.error.message);
@@ -88,7 +93,7 @@ export default async function handler(req, res) {
     });
 
     // Extraer datos del cuerpo de la solicitud
-    const { name, email, password, userType, country } = req.body;
+    const { name, email, password, userType, country } = req.body || {};
     const profilePhotoFile = req.files?.profilePhoto?.[0];
     const frontDniFile = req.files?.frontDni?.[0];
     const backDniFile = req.files?.backDni?.[0];
@@ -139,7 +144,7 @@ export default async function handler(req, res) {
       profilePhoto,
       frontDni,
       backDni,
-      certificates
+      certificates,
     });
 
     // Guardar el usuario en la base de datos
