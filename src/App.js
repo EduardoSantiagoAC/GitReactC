@@ -11,112 +11,202 @@ import UserProfile from './pages/UserProfile';
 import PaymentPage from './pages/PaymentPage';
 import ConfirmationPage from './pages/ConfirmationPage';
 
+
 function App() {
+  
   const [currentUser, setCurrentUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos"); 
+
+
+  
 
   const [pets, setPets] = useState([
     {
-      id: '1',
-      name: 'Biscuit',
-      breed: 'Golden Retriever',
-      age: 3,
-      owner: 'Juan Pérez',
-      image: 'https://th.bing.com/th/id/R.d680672d9d7a7b4d3da8c02e38dcfdc8?rik=7o1%2bYH1%2famZcLw&pid=ImgRaw&r=0',
-      description: 'Golden Retriever amigable y juguetón, ideal para compañía.',
-      price: 350,
-    },
-    {
-      id: '2',
-      name: 'Bigotes',
-      breed: 'Gato doméstico',
-      age: 2,
-      owner: 'Ana López',
-      image: 'https://i.pinimg.com/originals/82/68/bc/8268bc4a86267e93aa062928f6f735b2.jpg',
-      description: 'Gato juguetón y curioso, ideal para terapia emocional.',
-      price: 150,
-    },
-    {
-      id: '3',
-      name: 'Virus',
-      breed: 'Gato Egipcio',
+      id: "3",
+      name: "Virus",
       age: 4,
-      owner: 'Carlos Díaz',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/egipcio.PNG?raw=true',
-      description: 'Gato egipcio ideal para personas alérgicas.',
+      owner: "Carlos Díaz",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/egipcio.PNG?raw=true",
+      description: "Ideal para personas alérgicas.",
       price: 300,
     },
     {
-      id: '4',
-      name: 'Apache',
-      breed: 'Pastor Alemán',
+      id: "18",
+      name: "Lefty",
+      age: 5,
+      owner: "Patricia López",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/lefty.PNG?raw=true",
+      description: "Tranquila y longeva, ideal para jardines.",
+      price: 100,
+    },
+    {
+      id: "4",
+      name: "Apache",
       age: 1,
-      owner: 'María González',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/aleman.PNG?raw=true',
-      description: 'Cachorro amigable, ideal para familias con espacio.',
+      owner: "María González",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/aleman.PNG?raw=true",
+      description: "Cachorro amigable, ideal para familias con espacio.",
       price: 250,
     },
     {
-      id: '5',
-      name: 'Doggy',
-      breed: 'Perro Salchicha',
-      age: 2,
-      owner: 'Luis García',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/salchicha.PNG?raw=true',
-      description: 'Perro salchicha tranquilo y muy tierno.',
-      price: 350,
-    },
-    {
-      id: '6',
-      name: 'Luna',
-      breed: 'French Poodle',
-      age: 1,
-      owner: 'Ana Ruiz',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/poodle.PNG?raw=true',
-      description: 'French poodle cachorro silencioso y fiel.',
+      id: "9",
+      name: "Kira",
+      age: 3,
+      owner: "Juliana Martínez",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/siam%C3%A9s.PNG?raw=true",
+      description: "Suave y afectivo.",
       price: 200,
     },
     {
-      id: '7',
-      name: 'Doge',
-      breed: 'Shiba Inu',
-      age: 3,
-      owner: 'Pedro Sánchez',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/shiba.PNG?raw=true',
-      description: 'Shiba inu encantador y muy lindo.',
-      price: 400,
-    },
-    {
-      id: '8',
-      name: 'Carnitas',
-      breed: 'Gato Europeo',
+      id: "8",
+      name: "Carnitas",
       age: 2,
-      owner: 'Patricia López',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/Arturo.PNG?raw=true',
-      description: 'Afectivo y muy tranquilo.',
+      owner: "Patricia López",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/Arturo.PNG?raw=true",
+      description: "Afectivo y muy tranquilo.",
       price: 150,
     },
     {
-      id: '9',
-      name: 'Kira',
-      breed: 'Gato Siamés',
+      id: "19",
+      name: "Rafael",
+      age: 7,
+      owner: "Juliana Martínez",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/tortuga/rafael.PNG?raw=true",
+      description: "Con carácter, ideal para acuarios grandes.",
+      price: 150,
+    },
+    {
+      id: "16",
+      name: "Frederick",
       age: 3,
-      owner: 'Juliana Martínez',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/siam%C3%A9s.PNG?raw=true',
-      description: 'Siamés suave y afectivo.',
+      owner: "Ana Ruiz",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/iguana/frederick.PNG?raw=true",
+      description: "Exótica y fascinante, ideal para coleccionistas.",
+      price: 300,
+    },
+    {
+      id: "11",
+      name: "Kiki",
+      age: 2,
+      owner: "Juan Pérez",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/gatos/kiki.PNG?raw=true",
+      description: "Adorable con gran personalidad, ideal para interiores.",
+      price: 180,
+    },
+    {
+      id: "2",
+      name: "Bigotes",
+      age: 2,
+      owner: "Ana López",
+      image: "https://i.pinimg.com/originals/82/68/bc/8268bc4a86267e93aa062928f6f735b2.jpg",
+      description: "Juguetón y curioso, ideal para terapia emocional.",
+      price: 150,
+    },
+    {
+      id: "17",
+      name: "Billy",
+      age: 2,
+      owner: "Pedro Sánchez",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/serpiente/billy.PNG?raw=true",
+      description: "De gran belleza, ideal para terrarios.",
+      price: 250,
+    },
+    {
+      id: "15",
+      name: "Pelusa",
+      age: 2,
+      owner: "Luis García",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/pelusa.PNG?raw=true",
+      description: "De pelaje suave, perfecto para caricias.",
+      price: 90,
+    },
+    {
+      id: "13",
+      name: "Spirit",
+      age: 4,
+      owner: "Carlos Díaz",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/spirit.PNG?raw=true",
+      description: "Salvaje con espíritu libre, ideal para expertos.",
+      price: 4500,
+    },
+    {
+      id: "12",
+      name: "Pegazo",
+      age: 5,
+      owner: "Ana López",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/caballos/pegazo.PNG?raw=true",
+      description: "Elegante y ágil, perfecto para actividades ecuestres.",
+      price: 5000,
+    },
+    {
+      id: "10",
+      name: "Snowy",
+      age: 1,
+      owner: "Roberto García",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/chihuahua.PNG?raw=true",
+      description: "Tranquilo y curioso.",
       price: 200,
     },
     {
-      id: '10',
-      name: 'Snowy',
-      breed: 'Chihuahua',
+      id: "6",
+      name: "Luna",
       age: 1,
-      owner: 'Roberto García',
-      image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/chihuahua.PNG?raw=true',
-      description: 'Chihuahua tranquilo y curioso.',
+      owner: "Ana Ruiz",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/poodle.PNG?raw=true",
+      description: "Cachorro silencioso y fiel.",
       price: 200,
     },
+    {
+      id: "7",
+      name: "Doge",
+      age: 3,
+      owner: "Pedro Sánchez",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/shiba.PNG?raw=true",
+      description: "Encantador y muy lindo.",
+      price: 400,
+    },
+    {
+      id: "20",
+      name: "Dali",
+      age: 1,
+      owner: "Roberto García",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/rat/dali.PNG?raw=true",
+      description: "Inteligente y amigable, ideal como primer mascota.",
+      price: 50,
+    },
+    {
+      id: "14",
+      name: "Gridi",
+      age: 1,
+      owner: "María González",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/conejos/gridi.PNG?raw=true",
+      description: "Tierno y dócil, ideal para niños.",
+      price: 80,
+    },
+    {
+      id: "5",
+      name: "Doggy",
+      age: 2,
+      owner: "Luis García",
+      image: "https://github.com/JffrGD2/mascotas-temporales/blob/main/salchicha.PNG?raw=true",
+      description: "Tranquilo y muy tierno.",
+      price: 350,
+    },
+    {
+      id: "1",
+      name: "Biscuit",
+      age: 3,
+      owner: "Juan Pérez",
+      image: "https://th.bing.com/th/id/R.d680672d9d7a7b4d3da8c02e38dcfdc8?rik=7o1%2bYH1%2famZcLw&pid=ImgRaw&r=0",
+      description: "Amigable y juguetón, ideal para compañía.",
+      price: 350,
+    },
+
   ]);
 
+
+  
   const [caregivers, setCaregivers] = useState([
     {
       id: '1',
@@ -163,6 +253,7 @@ function App() {
       image: 'https://github.com/JffrGD2/mascotas-temporales/blob/main/Expertos/Roberto%20Fern%C3%A1ndez.PNG?raw=true',
       description: 'Cuidador con años de experiencia en perros de compañía y terapia.',
     },
+
     {
       id: '6',
       name: 'Isabel Ramírez',
@@ -210,6 +301,8 @@ function App() {
     },
   ]);
 
+
+  
   const [apiMessage, setApiMessage] = useState('');
 
   useEffect(() => {
@@ -223,6 +316,16 @@ function App() {
       });
   }, []);
 
+  // Manejar búsqueda por texto
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Manejar filtro por categoría
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+  };
+
   const handleLogin = (user) => {
     setCurrentUser(user);
   };
@@ -235,6 +338,8 @@ function App() {
     setPets((prevPets) => [...prevPets, newPet]);
   };
 
+
+  
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-100">
@@ -264,6 +369,7 @@ function App() {
                 <Login onLogin={handleLogin} />
               )
             }
+            
           />
           <Route path="/pago" element={<PaymentPage currentUser={currentUser} />} />
           <Route path="/confirmacion" element={<ConfirmationPage currentUser={currentUser} />} />
@@ -276,4 +382,7 @@ function App() {
   );
 }
 
+
+
 export default App;
+
