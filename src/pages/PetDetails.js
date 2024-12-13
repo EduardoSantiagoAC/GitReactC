@@ -702,7 +702,7 @@ const PetDetails = ({ pets }) => {
               className="w-full bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-semibold transition-all duration-300"
               onClick={() => alert(`Contactando a ${owner.name}...`)}
             >
-              Escribir al cuidador
+              solicita cuidar tu mascota
             </button>
           </div>
         </motion.div>
