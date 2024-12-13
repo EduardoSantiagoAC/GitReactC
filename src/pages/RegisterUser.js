@@ -96,6 +96,7 @@ const RegisterUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Validación de campos obligatorios
     if (
       !formData.name ||
       !formData.email ||
@@ -117,18 +118,34 @@ const RegisterUser = () => {
     try {
       // Subir imágenes a Cloudinary
       const profilePhotoUrl = await uploadToCloudinary(formData.profilePhoto);
-      const frontDniUrl = await uploadToCloudinary(formData.frontDni);
-      const backDniUrl = await uploadToCloudinary(formData.backDni);
-      const certificatesUrl = formData.certificates ? await uploadToCloudinary(formData.certificates) : null;
+      if (!profilePhotoUrl) throw new Error('Error al subir la foto de perfil.');
   
+      const frontDniUrl = await uploadToCloudinary(formData.frontDni);
+      if (!frontDniUrl) throw new Error('Error al subir la foto frontal del DNI.');
+  
+      const backDniUrl = await uploadToCloudinary(formData.backDni);
+      if (!backDniUrl) throw new Error('Error al subir la foto trasera del DNI.');
+  
+      const certificatesUrl = formData.certificates
+        ? await uploadToCloudinary(formData.certificates)
+        : null;
+  
+      // Crear objeto de datos del usuario
       const userData = {
-        ...formData,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        userType: formData.userType,
+        country: formData.country,
         profilePhoto: profilePhotoUrl,
         frontDni: frontDniUrl,
         backDni: backDniUrl,
         certificates: certificatesUrl,
       };
   
+      console.log('Datos enviados al backend:', userData);
+  
+      // Enviar datos al backend
       const response = await fetch('/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -140,13 +157,16 @@ const RegisterUser = () => {
         throw new Error(data.message || 'Error al registrar usuario.');
       }
   
+      // Manejar éxito
       setSuccess(true);
       setError('');
       setTimeout(() => navigate('/login'), 2000);
     } catch (error) {
+      console.error('Error en el registro:', error);
       setError(error.message);
     }
   };
+  
   
   return (
     <motion.div
