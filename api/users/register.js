@@ -34,18 +34,37 @@ export default async function handler(req, res) {
       return res.status(405).json({ message: 'Método no permitido' });
     }
 
-    const { name, email, password, userType, profilePhoto } = req.body;
-    console.log('Datos recibidos:', { name, email, userType, profilePhoto });
+    // Extraer datos del cuerpo de la solicitud
+    const { 
+      name, 
+      email, 
+      password, 
+      userType, 
+      profilePhoto, 
+      country, 
+      frontDni, 
+      backDni, 
+      certificates 
+    } = req.body;
 
-    if (!name || !email || !password || !userType || !profilePhoto) {
+    console.log('Datos recibidos:', { name, email, userType, country });
+
+    // Validar campos obligatorios
+    if (!name || !email || !password || !userType || !profilePhoto || !country || !frontDni || !backDni) {
       console.log('Error: Faltan campos obligatorios');
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
+    }
+
+    // Si el usuario es cuidador, validar que haya subido certificados
+    if (userType === 'Cuidador' && !certificates) {
+      console.log('Error: Los cuidadores deben subir certificados');
+      return res.status(400).json({ message: 'Los cuidadores deben subir certificados' });
     }
 
     // Conectar a MongoDB
     await connectToDatabase();
 
-    // Verificar si el usuario ya existe
+    // Verificar si el correo ya está registrado
     console.log('Verificando si el correo ya está registrado...');
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -65,6 +84,10 @@ export default async function handler(req, res) {
       password: hashedPassword, // Guardar la contraseña encriptada
       userType,
       profilePhoto,
+      country,
+      frontDni,
+      backDni,
+      certificates: userType === 'Cuidador' ? certificates : null, // Solo guardar certificados si es cuidador
     });
 
     // Guardar el usuario en la base de datos
@@ -72,9 +95,9 @@ export default async function handler(req, res) {
     console.log('Usuario registrado con éxito');
 
     // Responder con éxito
-    return res.status(200).json({ message: 'Usuario registrado con éxito' });
+    return res.status(201).json({ message: 'Usuario registrado con éxito', user: newUser });
   } catch (error) {
     console.error('Error inesperado en el servidor:', error.message);
-    return res.status(500).json({ message: 'Error interno del servidor' });
+    return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
   }
 }

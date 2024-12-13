@@ -52,7 +52,6 @@ const RegisterUser = () => {
       !formData.profilePhoto ||
       !formData.frontDni ||
       !formData.backDni ||
-      !formData.selfie ||
       !formData.country
     ) {
       setError('Todos los campos son obligatorios.');
@@ -64,9 +63,39 @@ const RegisterUser = () => {
       return;
     }
 
-    setSuccess(true);
-    setError('');
-    setTimeout(() => navigate('/login'), 2000);
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('userType', formData.userType);
+    formDataToSend.append('country', formData.country);
+    formDataToSend.append('profilePhoto', formData.profilePhoto);
+    formDataToSend.append('frontDni', formData.frontDni);
+    formDataToSend.append('backDni', formData.backDni);
+    if (formData.selfie) {
+      formDataToSend.append('selfie', formData.selfie);
+    }
+    if (formData.certificates) {
+      formDataToSend.append('certificates', formData.certificates);
+    }
+
+    try {
+      const response = await fetch('/api/users/register', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Error al registrar usuario.');
+      }
+
+      setSuccess(true);
+      setError('');
+      setTimeout(() => navigate('/login'), 2000);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -212,7 +241,7 @@ const RegisterUser = () => {
             </div>
           </div>
 
-          {/* Certificados (solo para cuidadores) */}
+          {/* Certificados */}
           {formData.userType === 'Cuidador' && (
             <div>
               <label htmlFor="certificates" className="block text-gray-600 font-medium">
