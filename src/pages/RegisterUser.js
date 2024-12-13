@@ -71,7 +71,7 @@ const RegisterUser = () => {
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'ml_default'); // Reemplaza 'ml_default' por tu "upload preset" de Cloudinary
+    formData.append('upload_preset', 'default-preset'); 
   
     try {
       const response = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
@@ -88,6 +88,7 @@ const RegisterUser = () => {
       return null;
     }
   };
+
   
   
   
