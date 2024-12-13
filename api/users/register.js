@@ -2,9 +2,7 @@ import bcrypt from 'bcrypt';
 import Cors from 'cors';
 import connectToDatabase from '../config/db';
 import User from '../models/User';
-import cloudinary from 'cloudinary';
 import multer from 'multer';
-import { promisify } from 'util';
 
 // Configuración de CORS
 const cors = Cors({
@@ -26,28 +24,6 @@ function runMiddleware(req, res, fn) {
 // Configuración de multer para manejar archivos
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-// Promisificar la función de Cloudinary para que se puedan usar promesas
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-const uploadToCloudinary = (fileBuffer, folder) => {
-  return new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result.secure_url);
-        }
-      }
-    ).end(fileBuffer);
-  });
-};
 
 export default async function handler(req, res) {
   try {
@@ -111,14 +87,34 @@ export default async function handler(req, res) {
     // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Subir imágenes a Cloudinary
-    const profilePhoto = await uploadToCloudinary(profilePhotoFile.buffer, 'profile_photos');
-    const frontDni = await uploadToCloudinary(frontDniFile.buffer, 'dni_photos');
-    const backDni = await uploadToCloudinary(backDniFile.buffer, 'dni_photos');
+    // Subir imágenes a Cloudinary usando el enlace
+    const uploadToCloudinary = async (fileBuffer) => {
+      const formData = new FormData();
+      formData.append('file', fileBuffer);
+      formData.append('upload_preset', 'ml_default'); // Asegúrate de usar el nombre correcto de tu "upload preset"
+
+      try {
+        const response = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error.message);
+        return data.secure_url; // La URL segura de la imagen subida
+      } catch (error) {
+        console.error('Error al subir a Cloudinary:', error);
+        throw new Error('Error al subir las imágenes a Cloudinary');
+      }
+    };
+
+    const profilePhoto = await uploadToCloudinary(profilePhotoFile.buffer);
+    const frontDni = await uploadToCloudinary(frontDniFile.buffer);
+    const backDni = await uploadToCloudinary(backDniFile.buffer);
 
     let certificates = null;
     if (userType === 'Cuidador' && certificatesFile) {
-      certificates = await uploadToCloudinary(certificatesFile.buffer, 'certificates');
+      certificates = await uploadToCloudinary(certificatesFile.buffer);
     }
 
     // Crear un nuevo usuario
