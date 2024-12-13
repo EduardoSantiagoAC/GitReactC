@@ -58,7 +58,7 @@ const CaregiversDetails = ({ caregivers }) => {
               whileTap={{ scale: 0.95 }}
               onClick={() => alert(`Contactando a ${caregiver.name}...`)}
             >
-              Contactar al cuidador
+              solicitar cuidar mascota
             </motion.button>
           </div>
 
