@@ -92,10 +92,10 @@ const RegisterUser = () => {
   
   
   
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Validar campos obligatorios
     if (
       !formData.name ||
       !formData.email ||
@@ -115,24 +115,32 @@ const RegisterUser = () => {
     }
   
     try {
-      // Crear FormData para enviar archivos al backend
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('password', formData.password);
-      formDataToSend.append('userType', formData.userType);
-      formDataToSend.append('country', formData.country);
-      formDataToSend.append('profilePhoto', formData.profilePhoto);
-      formDataToSend.append('frontDni', formData.frontDni);
-      formDataToSend.append('backDni', formData.backDni);
+      // Subir imágenes a Cloudinary antes de enviarlas al backend
+      const profilePhotoUrl = await uploadToCloudinary(formData.profilePhoto);
+      const frontDniUrl = await uploadToCloudinary(formData.frontDni);
+      const backDniUrl = await uploadToCloudinary(formData.backDni);
+      const certificatesUrl = formData.certificates
+        ? await uploadToCloudinary(formData.certificates)
+        : null;
   
-      if (formData.certificates) {
-        formDataToSend.append('certificates', formData.certificates);
-      }
+      // Crear el objeto de datos con las URLs de las imágenes
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        userType: formData.userType,
+        country: formData.country,
+        profilePhoto: profilePhotoUrl,
+        frontDni: frontDniUrl,
+        backDni: backDniUrl,
+        certificates: certificatesUrl,
+      };
   
+      // Enviar los datos al backend
       const response = await fetch('/api/users/register', {
         method: 'POST',
-        body: formDataToSend,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
       });
   
       if (!response.ok) {
@@ -148,7 +156,6 @@ const RegisterUser = () => {
       setError(error.message);
     }
   };
-  
   
   
   return (
