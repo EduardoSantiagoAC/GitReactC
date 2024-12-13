@@ -23,7 +23,43 @@ function runMiddleware(req, res, fn) {
 
 // Configuración de multer para manejar archivos
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Límite de 5 MB por archivo
+});
+
+export const config = {
+  api: {
+    bodyParser: false, // Deshabilitar el analizador de cuerpo para que multer pueda manejarlo
+  },
+};
+
+const uploadFilesMiddleware = upload.fields([
+  { name: 'profilePhoto', maxCount: 1 },
+  { name: 'frontDni', maxCount: 1 },
+  { name: 'backDni', maxCount: 1 },
+  { name: 'certificates', maxCount: 1 }
+]);
+
+const uploadToCloudinary = async (fileBuffer) => {
+  const formData = new FormData();
+  formData.append('file', fileBuffer);
+  formData.append('upload_preset', 'ml_default'); // Cambiar por el "upload_preset" correcto de Cloudinary
+
+  try {
+    const response = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error.message);
+    return data.secure_url; // La URL segura de la imagen subida
+  } catch (error) {
+    console.error('Error al subir a Cloudinary:', error);
+    throw new Error('Error al subir las imágenes a Cloudinary');
+  }
+};
 
 export default async function handler(req, res) {
   try {
@@ -41,12 +77,7 @@ export default async function handler(req, res) {
 
     // Usar multer para procesar la subida de archivos
     await new Promise((resolve, reject) => {
-      upload.fields([
-        { name: 'profilePhoto', maxCount: 1 },
-        { name: 'frontDni', maxCount: 1 },
-        { name: 'backDni', maxCount: 1 },
-        { name: 'certificates', maxCount: 1 }
-      ])(req, res, (err) => {
+      uploadFilesMiddleware(req, res, (err) => {
         if (err) {
           console.error('Error subiendo archivos con multer:', err);
           reject(err);
@@ -58,11 +89,12 @@ export default async function handler(req, res) {
 
     // Extraer datos del cuerpo de la solicitud
     const { name, email, password, userType, country } = req.body;
-    const profilePhotoFile = req.files['profilePhoto']?.[0];
-    const frontDniFile = req.files['frontDni']?.[0];
-    const backDniFile = req.files['backDni']?.[0];
-    const certificatesFile = req.files['certificates']?.[0];
+    const profilePhotoFile = req.files?.profilePhoto?.[0];
+    const frontDniFile = req.files?.frontDni?.[0];
+    const backDniFile = req.files?.backDni?.[0];
+    const certificatesFile = req.files?.certificates?.[0];
 
+    console.log('Archivos recibidos:', req.files);
     console.log('Datos recibidos:', { name, email, userType, country });
 
     // Validar campos obligatorios
@@ -87,27 +119,7 @@ export default async function handler(req, res) {
     // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Subir imágenes a Cloudinary usando el enlace
-    const uploadToCloudinary = async (fileBuffer) => {
-      const formData = new FormData();
-      formData.append('file', fileBuffer);
-      formData.append('upload_preset', 'ml_default'); // Asegúrate de usar el nombre correcto de tu "upload preset"
-
-      try {
-        const response = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error.message);
-        return data.secure_url; // La URL segura de la imagen subida
-      } catch (error) {
-        console.error('Error al subir a Cloudinary:', error);
-        throw new Error('Error al subir las imágenes a Cloudinary');
-      }
-    };
-
+    // Subir imágenes a Cloudinary
     const profilePhoto = await uploadToCloudinary(profilePhotoFile.buffer);
     const frontDni = await uploadToCloudinary(frontDniFile.buffer);
     const backDni = await uploadToCloudinary(backDniFile.buffer);
