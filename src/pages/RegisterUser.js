@@ -66,6 +66,30 @@ const RegisterUser = () => {
       [name]: file,
     }));
   };
+
+
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'ml_default'); // Reemplaza 'ml_default' por tu "upload preset" de Cloudinary
+  
+    try {
+      const response = await fetch('https://api.cloudinary.com/v1_1/dp6iwjckt/image/upload', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error.message);
+      return data.secure_url; // La URL segura de la imagen subida
+    } catch (error) {
+      console.error('Error al subir a Cloudinary:', error);
+      setError('Error al subir la imagen a Cloudinary');
+      return null;
+    }
+  };
+  
+  
   
 
   const handleSubmit = async (e) => {
@@ -89,37 +113,40 @@ const RegisterUser = () => {
       return;
     }
   
-    const formDataToSend = new FormData();
-    formDataToSend.append('name', formData.name);
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('password', formData.password);
-    formDataToSend.append('userType', formData.userType);
-    formDataToSend.append('country', formData.country);
-    formDataToSend.append('profilePhoto', formData.profilePhoto);
-    formDataToSend.append('frontDni', formData.frontDni);
-    formDataToSend.append('backDni', formData.backDni);
-    if (formData.selfie) formDataToSend.append('selfie', formData.selfie);
-    if (formData.certificates) formDataToSend.append('certificates', formData.certificates);
-  
     try {
+      // Subir imágenes a Cloudinary
+      const profilePhotoUrl = await uploadToCloudinary(formData.profilePhoto);
+      const frontDniUrl = await uploadToCloudinary(formData.frontDni);
+      const backDniUrl = await uploadToCloudinary(formData.backDni);
+      const certificatesUrl = formData.certificates ? await uploadToCloudinary(formData.certificates) : null;
+  
+      const userData = {
+        ...formData,
+        profilePhoto: profilePhotoUrl,
+        frontDni: frontDniUrl,
+        backDni: backDniUrl,
+        certificates: certificatesUrl,
+      };
+  
       const response = await fetch('/api/users/register', {
         method: 'POST',
-        body: formDataToSend,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
       });
   
       if (!response.ok) {
-        const data = await response.json().catch(() => ({ message: 'Error al registrar usuario.' }));
+        const data = await response.json();
         throw new Error(data.message || 'Error al registrar usuario.');
       }
   
       setSuccess(true);
       setError('');
       setTimeout(() => navigate('/login'), 2000);
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setError(error.message);
     }
   };
-
+  
   return (
     <motion.div
       className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FAF3E0] to-[#F3D9DB] px-6"
@@ -133,30 +160,21 @@ const RegisterUser = () => {
         {success && <p className="text-green-500 mb-4">¡Usuario registrado con éxito!</p>}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+         
           {/* Foto de perfil */}
-          <div className="flex flex-col items-center">
-            <label
-              htmlFor="profilePhoto"
-              className="w-32 h-32 rounded-full bg-[#FAF3E0] flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-[#B4789D] transition-all"
-            >
-              {profilePhotoPreview ? (
-                <img
-                  src={profilePhotoPreview}
-                  alt="Foto de perfil"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-gray-400 font-medium">Subir Foto</span>
-              )}
-            </label>
-            <input
-              type="file"
-              name="profilePhoto"
-              id="profilePhoto"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </div>
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="profilePhoto"
+            className="w-32 h-32 rounded-full bg-[#FAF3E0] flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-[#B4789D] transition-all"
+          >
+            {profilePhotoPreview ? (
+              <img src={profilePhotoPreview} alt="Foto de perfil" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-gray-400 font-medium">Subir Foto</span>
+            )}
+          </label>
+          <input type="file" name="profilePhoto" id="profilePhoto" onChange={handleFileChange} className="hidden" />
+        </div>
 
           {/* Información personal */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -225,23 +243,23 @@ const RegisterUser = () => {
 
           {/* Fotos del DNI */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Sección para la Foto Frontal del DNI */}
-            <div className="flex flex-col items-center">
-              <label htmlFor="frontDni" className="w-32 h-32 bg-[#FAF3E0] flex items-center justify-center overflow-hidden border border-gray-200 shadow-sm cursor-pointer hover:ring-2 hover:ring-[#B4789D] transition-all">
-                {frontDniPreview ? (
-                  <img src={frontDniPreview} alt="Foto Frontal del DNI" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-gray-400 font-medium">Subir Foto Frontal</span>
-                )}
-              </label>
-              <input 
-                type="file" 
-                name="frontDni" 
-                id="frontDni" 
-                onChange={handleFileChange} 
-                className="hidden" 
-              />
-            </div>
+          <div>
+            <label htmlFor="frontDni" className="block text-gray-600 font-medium">Foto Frontal del DNI</label>
+            <label htmlFor="frontDni" className="bg-gradient-to-r from-[#B4789D] to-[#EAA9A5] text-white py-2 px-8 rounded-full font-semibold hover:scale-105 transition-transform cursor-pointer text-center inline-block">
+              Seleccionar Archivo
+            </label>
+            <input type="file" name="frontDni" id="frontDni" onChange={handleFileChange} className="hidden" />
+            {frontDniPreview && <img src={frontDniPreview} alt="Foto Frontal del DNI" className="w-32 h-32" />}
+          </div>
+
+          <div>
+            <label htmlFor="backDni" className="block text-gray-600 font-medium">Foto Trasera del DNI</label>
+            <label htmlFor="backDni" className="bg-gradient-to-r from-[#B4789D] to-[#EAA9A5] text-white py-2 px-8 rounded-full font-semibold hover:scale-105 transition-transform cursor-pointer text-center inline-block">
+              Seleccionar Archivo
+            </label>
+            <input type="file" name="backDni" id="backDni" onChange={handleFileChange} className="hidden" />
+            {backDniPreview && <img src={backDniPreview} alt="Foto Trasera del DNI" className="w-32 h-32" />}
+          </div>
 
             {/* Sección para la Foto Trasera del DNI */}
             <div className="flex flex-col items-center">
